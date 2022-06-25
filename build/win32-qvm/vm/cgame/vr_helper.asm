@@ -1,0 +1,4666 @@
+export trap_Cvar_VariableValue
+code
+proc trap_Cvar_VariableValue 132 12
+file "..\..\..\..\code\cgame\vr_helper.c"
+line 3
+;1:#include "vr_helper.h"
+;2:
+;3:float trap_Cvar_VariableValue(const char *var_name) {
+line 5
+;4:	char buf[128];
+;5:	trap_Cvar_VariableStringBuffer(var_name, buf, sizeof(buf));
+ADDRFP4 0
+INDIRP4
+ARGP4
+ADDRLP4 0
+ARGP4
+CNSTI4 128
+ARGI4
+ADDRGP4 trap_Cvar_VariableStringBuffer
+CALLV
+pop
+line 6
+;6:	return atof(buf);
+ADDRLP4 0
+ARGP4
+ADDRLP4 128
+ADDRGP4 atof
+CALLF4
+ASGNF4
+ADDRLP4 128
+INDIRF4
+RETF4
+LABELV $87
+endproc trap_Cvar_VariableValue 132 12
+export sinf
+proc sinf 4 4
+line 10
+;7:}
+;8:
+;9:#ifdef Q3_VM
+;10:float sinf(float _X) {
+line 11
+;11:	return (float)sin(_X);
+ADDRFP4 0
+INDIRF4
+ARGF4
+ADDRLP4 0
+ADDRGP4 sin
+CALLF4
+ASGNF4
+ADDRLP4 0
+INDIRF4
+RETF4
+LABELV $88
+endproc sinf 4 4
+export cosf
+proc cosf 4 4
+line 14
+;12:}
+;13:float cosf(float _X)
+;14:{
+line 15
+;15:	return (float)cos(_X);
+ADDRFP4 0
+INDIRF4
+ARGF4
+ADDRLP4 0
+ADDRGP4 cos
+CALLF4
+ASGNF4
+ADDRLP4 0
+INDIRF4
+RETF4
+LABELV $89
+endproc cosf 4 4
+export VR_get_client_HMD_position
+proc VR_get_client_HMD_position 0 0
+line 28
+;16:}
+;17:#endif
+;18:
+;19:
+;20://========================================
+;21:// get the VR value from the client
+;22://		standard QVM | native VM
+;23://========================================
+;24:
+;25://
+;26:// HMD position and angles
+;27://
+;28:void VR_get_client_HMD_position( vec3_t HMDposition ) {
+line 33
+;29:#ifdef USE_NATIVE_HACK
+;30:	VectorCopy(vrinfo->hmdinfo.position.actual, HMDposition);
+;31:#endif
+;32:#ifdef USE_VR_QVM
+;33:	VectorCopy(cg.predictedPlayerState.HMD_raw_origin, HMDposition);
+ADDRFP4 0
+INDIRP4
+ADDRGP4 cg+234796+484
+INDIRB
+ASGNB 12
+line 35
+;34:#endif
+;35:}
+LABELV $90
+endproc VR_get_client_HMD_position 0 0
+export VR_get_client_HMD_angles
+proc VR_get_client_HMD_angles 0 0
+line 37
+;36:
+;37:void VR_get_client_HMD_angles( vec3_t HMDangles ) {
+line 41
+;38:#ifdef USE_NATIVE_HACK
+;39:	VectorCopy(vrinfo->hmdinfo.angles.actual, HMDangles);
+;40:#else
+;41:	VectorCopy(cg.predictedPlayerState.viewangles, HMDangles);
+ADDRFP4 0
+INDIRP4
+ADDRGP4 cg+234796+152
+INDIRB
+ASGNB 12
+line 43
+;42:#endif
+;43:}
+LABELV $93
+endproc VR_get_client_HMD_angles 0 0
+export VR_get_client_controller_type
+proc VR_get_client_controller_type 0 0
+line 48
+;44:
+;45://
+;46:// controller type, position, angles, offset
+;47://
+;48:qboolean VR_get_client_controller_type( void ) {
+line 53
+;49:#ifdef USE_NATIVE_HACK
+;50:	return vrinfo->vr_controller_type;
+;51:#endif
+;52:#ifdef USE_VR_QVM
+;53:	return cg.vr_controller_type;
+ADDRGP4 cg+282972
+INDIRI4
+RETI4
+LABELV $96
+endproc VR_get_client_controller_type 0 0
+export VR_get_client_controller_position
+proc VR_get_client_controller_position 0 0
+line 57
+;54:#endif
+;55:}
+;56:
+;57:void VR_get_client_controller_position( int side, vec3_t pos ) {
+line 62
+;58:#ifdef USE_NATIVE_HACK
+;59:	VectorCopy(vrinfo->controllers[side].position.actual, pos );
+;60:#endif
+;61:#ifdef USE_VR_QVM
+;62:	if ( side == SideRIGHT )
+ADDRFP4 0
+INDIRI4
+CNSTI4 1
+NEI4 $99
+line 63
+;63:		VectorCopy(cg.predictedPlayerState.right_hand_position, pos);
+ADDRFP4 4
+INDIRP4
+ADDRGP4 cg+234796+520
+INDIRB
+ASGNB 12
+ADDRGP4 $100
+JUMPV
+LABELV $99
+line 65
+;64:	else
+;65:		VectorCopy(cg.predictedPlayerState.left_hand_position, pos);
+ADDRFP4 4
+INDIRP4
+ADDRGP4 cg+234796+532
+INDIRB
+ASGNB 12
+LABELV $100
+line 67
+;66:#endif
+;67:}
+LABELV $98
+endproc VR_get_client_controller_position 0 0
+export VR_get_client_controller_offset
+proc VR_get_client_controller_offset 0 0
+line 81
+;68:
+;69:/*void VR_get_client_controller_angles( int side, vec3_t angles ) {
+;70:#ifdef USE_NATIVE_HACK
+;71:	VectorCopy(vrinfo->controllers[side].angles.actual, angles);
+;72:#endif
+;73:#ifdef USE_VR_QVM
+;74:	if ( side == SideRIGHT )
+;75:		VectorCopy(cg.predictedPlayerState.right_hand_angles, angles);
+;76:	else
+;77:		VectorCopy(cg.predictedPlayerState.left_hand_angles, angles);
+;78:#endif
+;79:}*/
+;80:
+;81:void VR_get_client_controller_offset( int side, vec3_t controllerOffset ) {
+line 86
+;82:#ifdef USE_NATIVE_HACK
+;83:	VectorCopy(vrinfo->controllers[side].hmd_ctrl_offset, controllerOffset);
+;84:#endif
+;85:#ifdef USE_VR_QVM
+;86:	if ( side == SideRIGHT )
+ADDRFP4 0
+INDIRI4
+CNSTI4 1
+NEI4 $106
+line 87
+;87:		VectorSubtract(cg.predictedPlayerState.HMD_raw_origin, cg.predictedPlayerState.right_hand_position, controllerOffset);
+ADDRFP4 4
+INDIRP4
+ADDRGP4 cg+234796+484
+INDIRF4
+ADDRGP4 cg+234796+520
+INDIRF4
+SUBF4
+ASGNF4
+ADDRFP4 4
+INDIRP4
+CNSTI4 4
+ADDP4
+ADDRGP4 cg+234796+484+4
+INDIRF4
+ADDRGP4 cg+234796+520+4
+INDIRF4
+SUBF4
+ASGNF4
+ADDRFP4 4
+INDIRP4
+CNSTI4 8
+ADDP4
+ADDRGP4 cg+234796+484+8
+INDIRF4
+ADDRGP4 cg+234796+520+8
+INDIRF4
+SUBF4
+ASGNF4
+ADDRGP4 $107
+JUMPV
+LABELV $106
+line 89
+;88:	else
+;89:		VectorSubtract(cg.predictedPlayerState.HMD_raw_origin, cg.predictedPlayerState.left_hand_position, controllerOffset);
+ADDRFP4 4
+INDIRP4
+ADDRGP4 cg+234796+484
+INDIRF4
+ADDRGP4 cg+234796+532
+INDIRF4
+SUBF4
+ASGNF4
+ADDRFP4 4
+INDIRP4
+CNSTI4 4
+ADDP4
+ADDRGP4 cg+234796+484+4
+INDIRF4
+ADDRGP4 cg+234796+532+4
+INDIRF4
+SUBF4
+ASGNF4
+ADDRFP4 4
+INDIRP4
+CNSTI4 8
+ADDP4
+ADDRGP4 cg+234796+484+8
+INDIRF4
+ADDRGP4 cg+234796+532+8
+INDIRF4
+SUBF4
+ASGNF4
+LABELV $107
+line 91
+;90:#endif
+;91:}
+LABELV $105
+endproc VR_get_client_controller_offset 0 0
+export VR_get_client_vrFlags
+proc VR_get_client_vrFlags 0 0
+line 96
+;92:
+;93://
+;94:// Get player info
+;95://
+;96:qboolean VR_get_client_vrFlags( void ) {
+line 102
+;97:#ifdef USE_NATIVE_HACK
+;98:	return vrinfo->vrFlags;
+;99:#endif
+;100:
+;101:#ifdef USE_VR_QVM
+;102:	return cg.predictedPlayerState.vrFlags;
+ADDRGP4 cg+234796+556
+INDIRI4
+RETI4
+LABELV $140
+endproc VR_get_client_vrFlags 0 0
+export VR_get_ps_vrFlags
+proc VR_get_ps_vrFlags 0 0
+line 122
+;103:#endif
+;104:}
+;105:
+;106:#ifdef USE_VR_ZOOM
+;107:float VR_get_client_weapon_zoomLevel( void ) {
+;108:#ifdef USE_NATIVE_HACK
+;109:	return vrinfo->weapon_zoomLevel;
+;110:#endif
+;111:#ifdef USE_VR_QVM
+;112:	return 1.0f; //GUNNM TODO create a cvar as we don't have access to vrinfo in non-native QVM
+;113:#endif
+;114:}
+;115:#endif
+;116:
+;117:
+;118://========================================
+;119:// get the VR value of any other player
+;120://		standard QVM | native VM
+;121://========================================
+;122:qboolean VR_get_ps_vrFlags( playerState_t *ps, qboolean mySelf ) {
+line 131
+;123:#ifdef USE_NATIVE_HACK
+;124:	if ( mySelf )
+;125:		return vrinfo->vrFlags;
+;126:	else
+;127:		return 0;
+;128:#endif
+;129:
+;130:#ifdef USE_VR_QVM
+;131:	if ( mySelf )
+ADDRFP4 4
+INDIRI4
+CNSTI4 0
+EQI4 $144
+line 132
+;132:		return cg.predictedPlayerState.vrFlags;
+ADDRGP4 cg+234796+556
+INDIRI4
+RETI4
+ADDRGP4 $143
+JUMPV
+LABELV $144
+line 133
+;133:	else if ( ps )
+ADDRFP4 0
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $148
+line 134
+;134:		return ps->vrFlags;
+ADDRFP4 0
+INDIRP4
+CNSTI4 556
+ADDP4
+INDIRI4
+RETI4
+ADDRGP4 $143
+JUMPV
+LABELV $148
+line 136
+;135:	else
+;136:		return 0;
+CNSTI4 0
+RETI4
+LABELV $143
+endproc VR_get_ps_vrFlags 0 0
+export VR_get_cent_controller_type
+proc VR_get_cent_controller_type 12 0
+line 140
+;137:#endif
+;138:}
+;139:
+;140:int VR_get_cent_controller_type( centity_t *cent ) {
+line 141
+;141:	int clientNum = cent->currentState.clientNum;
+ADDRLP4 0
+ADDRFP4 0
+INDIRP4
+CNSTI4 168
+ADDP4
+INDIRI4
+ASGNI4
+line 142
+;142:	if ( clientNum >= 0 && clientNum < MAX_CLIENTS ) {
+ADDRLP4 0
+INDIRI4
+CNSTI4 0
+LTI4 $151
+ADDRLP4 0
+INDIRI4
+CNSTI4 64
+GEI4 $151
+line 143
+;143:		clientInfo_t *ci = &cgs.clientinfo[clientNum];
+ADDRLP4 8
+ADDRLP4 0
+INDIRI4
+CNSTI4 1680
+MULI4
+ADDRGP4 cgs+41012
+ADDP4
+ASGNP4
+line 144
+;144:		if ( ci->infoValid ) {
+ADDRLP4 8
+INDIRP4
+INDIRI4
+CNSTI4 0
+EQI4 $154
+line 145
+;145:			return ci->vr_controller_type;
+ADDRLP4 8
+INDIRP4
+CNSTI4 1652
+ADDP4
+INDIRI4
+RETI4
+ADDRGP4 $150
+JUMPV
+LABELV $154
+line 147
+;146:		}
+;147:	}
+LABELV $151
+line 148
+;148:	return 0;
+CNSTI4 0
+RETI4
+LABELV $150
+endproc VR_get_cent_controller_type 12 0
+export VR_get_ps_controller_type
+proc VR_get_ps_controller_type 0 0
+line 151
+;149:}
+;150:
+;151:int VR_get_ps_controller_type( playerState_t *ps ) {
+line 156
+;152:#ifdef USE_NATIVE_HACK
+;153:	return vrinfo->vr_controller_type;
+;154:#endif
+;155:#ifdef USE_VR_QVM
+;156:	if ( ps )
+ADDRFP4 0
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $157
+line 157
+;157:		return ps->vr_controller_type;
+ADDRFP4 0
+INDIRP4
+CNSTI4 468
+ADDP4
+INDIRI4
+RETI4
+ADDRGP4 $156
+JUMPV
+LABELV $157
+line 159
+;158:	else
+;159:		return 0;
+CNSTI4 0
+RETI4
+LABELV $156
+endproc VR_get_ps_controller_type 0 0
+export VR_get_ps_controller_angles
+proc VR_get_ps_controller_angles 0 0
+line 164
+;160:#endif
+;161:}
+;162:
+;163:
+;164:void VR_get_ps_controller_angles( int side, playerState_t *ps, vec3_t angles ) {
+line 169
+;165:#ifdef USE_NATIVE_HACK
+;166:	VectorCopy(vrinfo->controllers[side].angles.actual, angles);
+;167:#endif
+;168:#ifdef USE_VR_QVM
+;169:	if ( side == SideRIGHT )
+ADDRFP4 0
+INDIRI4
+CNSTI4 1
+NEI4 $160
+line 171
+;170:		//VectorCopy(cg.snap->ps.right_hand_angles, angles);
+;171:		VectorCopy(ps->right_hand_angles, angles);//non!!!!!!!!!!!
+ADDRFP4 8
+INDIRP4
+ADDRFP4 4
+INDIRP4
+CNSTI4 508
+ADDP4
+INDIRB
+ASGNB 12
+ADDRGP4 $161
+JUMPV
+LABELV $160
+line 173
+;172:	else
+;173:		VectorCopy(ps->left_hand_angles, angles);
+ADDRFP4 8
+INDIRP4
+ADDRFP4 4
+INDIRP4
+CNSTI4 544
+ADDP4
+INDIRB
+ASGNB 12
+LABELV $161
+line 175
+;174:#endif
+;175:}
+LABELV $159
+endproc VR_get_ps_controller_angles 0 0
+export VR_get_cent_vrFlags
+proc VR_get_cent_vrFlags 0 0
+line 177
+;176:
+;177:qboolean VR_get_cent_vrFlags(centity_t *cent, qboolean mySelf) {
+line 186
+;178:#ifdef USE_NATIVE_HACK
+;179:	if ( mySelf )
+;180:		return vrinfo->vrFlags;
+;181:	else
+;182:		return 0;
+;183:#endif
+;184:	
+;185:#ifdef USE_VR_QVM
+;186:	if ( mySelf )
+ADDRFP4 4
+INDIRI4
+CNSTI4 0
+EQI4 $163
+line 187
+;187:		return cg.predictedPlayerState.vrFlags;
+ADDRGP4 cg+234796+556
+INDIRI4
+RETI4
+ADDRGP4 $162
+JUMPV
+LABELV $163
+line 188
+;188:	else if ( cent )
+ADDRFP4 0
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $167
+line 189
+;189:		return cent->currentState.vrFlags;
+ADDRFP4 0
+INDIRP4
+CNSTI4 448
+ADDP4
+INDIRI4
+RETI4
+ADDRGP4 $162
+JUMPV
+LABELV $167
+line 191
+;190:	else
+;191:		return 0;
+CNSTI4 0
+RETI4
+LABELV $162
+endproc VR_get_cent_vrFlags 0 0
+export VR_get_cent_controller_angles
+proc VR_get_cent_controller_angles 16 0
+line 195
+;192:#endif
+;193:}
+;194:
+;195:void VR_get_cent_controller_angles( centity_t *cent, vec3_t ctrlAngles, int side ) {
+line 196
+;196:	qboolean mySelf = (cent->currentState.number == cg.predictedPlayerState.clientNum);
+ADDRFP4 0
+INDIRP4
+INDIRI4
+ADDRGP4 cg+234796+140
+INDIRI4
+NEI4 $173
+ADDRLP4 4
+CNSTI4 1
+ASGNI4
+ADDRGP4 $174
+JUMPV
+LABELV $173
+ADDRLP4 4
+CNSTI4 0
+ASGNI4
+LABELV $174
+ADDRLP4 0
+ADDRLP4 4
+INDIRI4
+ASGNI4
+line 199
+;197:
+;198:#ifdef USE_VR_QVM
+;199:	if ( mySelf ) {
+ADDRLP4 0
+INDIRI4
+CNSTI4 0
+EQI4 $175
+line 201
+;200:		// get span Yaw angle
+;201:		float spawn_yaw = cg.predictedPlayerState.viewangles[YAW] - cg.refdefViewAngles[YAW];
+ADDRLP4 8
+ADDRGP4 cg+234796+152+4
+INDIRF4
+ADDRGP4 cg+237172+4
+INDIRF4
+SUBF4
+ASGNF4
+line 203
+;202:
+;203:		if ( side == SideRIGHT )
+ADDRFP4 8
+INDIRI4
+CNSTI4 1
+NEI4 $182
+line 204
+;204:			VectorCopy(cg.predictedPlayerState.right_hand_angles, ctrlAngles);
+ADDRFP4 4
+INDIRP4
+ADDRGP4 cg+234796+508
+INDIRB
+ASGNB 12
+ADDRGP4 $183
+JUMPV
+LABELV $182
+line 206
+;205:		else
+;206:			VectorCopy(cg.predictedPlayerState.left_hand_angles, ctrlAngles);
+ADDRFP4 4
+INDIRP4
+ADDRGP4 cg+234796+544
+INDIRB
+ASGNB 12
+LABELV $183
+line 209
+;207:
+;208:		// Add span Yaw angle
+;209:		ctrlAngles[YAW] -= spawn_yaw;
+ADDRLP4 12
+ADDRFP4 4
+INDIRP4
+CNSTI4 4
+ADDP4
+ASGNP4
+ADDRLP4 12
+INDIRP4
+ADDRLP4 12
+INDIRP4
+INDIRF4
+ADDRLP4 8
+INDIRF4
+SUBF4
+ASGNF4
+line 210
+;210:	}
+ADDRGP4 $176
+JUMPV
+LABELV $175
+line 211
+;211:	else {
+line 212
+;212:		if ( side == SideRIGHT )
+ADDRFP4 8
+INDIRI4
+CNSTI4 1
+NEI4 $188
+line 213
+;213:			VectorCopy(cent->currentState.s_rightAngles, ctrlAngles);
+ADDRFP4 4
+INDIRP4
+ADDRFP4 0
+INDIRP4
+CNSTI4 316
+ADDP4
+INDIRB
+ASGNB 12
+ADDRGP4 $189
+JUMPV
+LABELV $188
+line 215
+;214:		else
+;215:			VectorCopy(cent->currentState.s_leftAngles, ctrlAngles);
+ADDRFP4 4
+INDIRP4
+ADDRFP4 0
+INDIRP4
+CNSTI4 436
+ADDP4
+INDIRB
+ASGNB 12
+LABELV $189
+line 216
+;216:	}
+LABELV $176
+line 235
+;217:	//else // TODO not a vr player
+;218:	//	VectorCopy(cent->lerpAngles, ctrlAngles);
+;219:#endif
+;220:
+;221:#ifdef USE_NATIVE_HACK
+;222:	if ( mySelf ) {
+;223:		VectorCopy(vrinfo->controllers[SideRIGHT].angles.actual, ctrlAngles);
+;224:
+;225:		// Add span Yaw angle
+;226:		//if (cg.vr_controller_type == 1)
+;227:		{
+;228:			float spawn_yaw = vrinfo->hmdinfo.angles.actual[YAW] - cg.refdefViewAngles[YAW];
+;229:			ctrlAngles[YAW] -= spawn_yaw;
+;230:		}
+;231:	}
+;232:	else
+;233:		VectorCopy(cent->lerpAngles, ctrlAngles);
+;234:#endif
+;235:}
+LABELV $169
+endproc VR_get_cent_controller_angles 16 0
+export math_length
+proc math_length 12 4
+line 243
+;236:
+;237:
+;238:/*
+;239:=================
+;240:length
+;241:=================
+;242:*/
+;243:float math_length(float x, float y) {
+line 247
+;244:#if defined USE_NATIVE_HACK && defined _MSC_VER
+;245:	return sqrtf(powf(x, 2.0f) + powf(y, 2.0f));
+;246:#else
+;247:	return Q_rsqrt(x * x + y * y);
+ADDRLP4 0
+ADDRFP4 0
+INDIRF4
+ASGNF4
+ADDRLP4 4
+ADDRFP4 4
+INDIRF4
+ASGNF4
+ADDRLP4 0
+INDIRF4
+ADDRLP4 0
+INDIRF4
+MULF4
+ADDRLP4 4
+INDIRF4
+ADDRLP4 4
+INDIRF4
+MULF4
+ADDF4
+ARGF4
+ADDRLP4 8
+ADDRGP4 Q_rsqrt
+CALLF4
+ASGNF4
+ADDRLP4 8
+INDIRF4
+RETF4
+LABELV $190
+endproc math_length 12 4
+export SinCos
+proc SinCos 8 4
+line 257
+;248:#endif
+;249:}
+;250:
+;251:/*
+;252:=================
+;253:SinCos
+;254:=================
+;255:*/
+;256:void SinCos(float radians, float *sine, float *cosine)
+;257:{
+line 275
+;258:#if _MSC_VER == 1200
+;259:	_asm
+;260:	{
+;261:		fld	dword ptr[radians]
+;262:		fsincos
+;263:
+;264:		mov edx, dword ptr[cosine]
+;265:		mov eax, dword ptr[sine]
+;266:
+;267:		fstp dword ptr[edx]
+;268:		fstp dword ptr[eax]
+;269:	}
+;270:#else
+;271:	// I think, better use math.h function, instead of ^
+;272:#if defined (__linux__) && !defined (__ANDROID__)
+;273:	sincosf(radians, sine, cosine);
+;274:#else
+;275:	*sine = sinf(radians);
+ADDRFP4 0
+INDIRF4
+ARGF4
+ADDRLP4 0
+ADDRGP4 sinf
+CALLF4
+ASGNF4
+ADDRFP4 4
+INDIRP4
+ADDRLP4 0
+INDIRF4
+ASGNF4
+line 276
+;276:	*cosine = cosf(radians);
+ADDRFP4 0
+INDIRF4
+ARGF4
+ADDRLP4 4
+ADDRGP4 cosf
+CALLF4
+ASGNF4
+ADDRFP4 8
+INDIRP4
+ADDRLP4 4
+INDIRF4
+ASGNF4
+line 279
+;277:#endif
+;278:#endif
+;279:}
+LABELV $191
+endproc SinCos 8 4
+export Matrix4x4_Concat
+proc Matrix4x4_Concat 128 0
+line 282
+;280:
+;281:void Matrix4x4_Concat(matrix4x4 out, /*const*/ matrix4x4 in1, /*const*/ matrix4x4 in2)
+;282:{
+line 283
+;283:	out[0][0] = in1[0][0] * in2[0][0] + in1[0][1] * in2[1][0] + in1[0][2] * in2[2][0] + in1[0][3] * in2[3][0];
+ADDRLP4 0
+ADDRFP4 4
+INDIRP4
+ASGNP4
+ADDRLP4 4
+ADDRFP4 8
+INDIRP4
+ASGNP4
+ADDRFP4 0
+INDIRP4
+ADDRLP4 0
+INDIRP4
+INDIRF4
+ADDRLP4 4
+INDIRP4
+INDIRF4
+MULF4
+ADDRLP4 0
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRF4
+ADDRLP4 4
+INDIRP4
+CNSTI4 16
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ADDRLP4 0
+INDIRP4
+CNSTI4 8
+ADDP4
+INDIRF4
+ADDRLP4 4
+INDIRP4
+CNSTI4 32
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ADDRLP4 0
+INDIRP4
+CNSTI4 12
+ADDP4
+INDIRF4
+ADDRLP4 4
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ASGNF4
+line 284
+;284:	out[0][1] = in1[0][0] * in2[0][1] + in1[0][1] * in2[1][1] + in1[0][2] * in2[2][1] + in1[0][3] * in2[3][1];
+ADDRLP4 8
+ADDRFP4 4
+INDIRP4
+ASGNP4
+ADDRLP4 12
+ADDRFP4 8
+INDIRP4
+ASGNP4
+ADDRFP4 0
+INDIRP4
+CNSTI4 4
+ADDP4
+ADDRLP4 8
+INDIRP4
+INDIRF4
+ADDRLP4 12
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRF4
+MULF4
+ADDRLP4 8
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRF4
+ADDRLP4 12
+INDIRP4
+CNSTI4 20
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ADDRLP4 8
+INDIRP4
+CNSTI4 8
+ADDP4
+INDIRF4
+ADDRLP4 12
+INDIRP4
+CNSTI4 36
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ADDRLP4 8
+INDIRP4
+CNSTI4 12
+ADDP4
+INDIRF4
+ADDRLP4 12
+INDIRP4
+CNSTI4 52
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ASGNF4
+line 285
+;285:	out[0][2] = in1[0][0] * in2[0][2] + in1[0][1] * in2[1][2] + in1[0][2] * in2[2][2] + in1[0][3] * in2[3][2];
+ADDRLP4 16
+ADDRFP4 4
+INDIRP4
+ASGNP4
+ADDRLP4 20
+ADDRFP4 8
+INDIRP4
+ASGNP4
+ADDRFP4 0
+INDIRP4
+CNSTI4 8
+ADDP4
+ADDRLP4 16
+INDIRP4
+INDIRF4
+ADDRLP4 20
+INDIRP4
+CNSTI4 8
+ADDP4
+INDIRF4
+MULF4
+ADDRLP4 16
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRF4
+ADDRLP4 20
+INDIRP4
+CNSTI4 24
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ADDRLP4 16
+INDIRP4
+CNSTI4 8
+ADDP4
+INDIRF4
+ADDRLP4 20
+INDIRP4
+CNSTI4 40
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ADDRLP4 16
+INDIRP4
+CNSTI4 12
+ADDP4
+INDIRF4
+ADDRLP4 20
+INDIRP4
+CNSTI4 56
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ASGNF4
+line 286
+;286:	out[0][3] = in1[0][0] * in2[0][3] + in1[0][1] * in2[1][3] + in1[0][2] * in2[2][3] + in1[0][3] * in2[3][3];
+ADDRLP4 24
+ADDRFP4 4
+INDIRP4
+ASGNP4
+ADDRLP4 28
+ADDRFP4 8
+INDIRP4
+ASGNP4
+ADDRFP4 0
+INDIRP4
+CNSTI4 12
+ADDP4
+ADDRLP4 24
+INDIRP4
+INDIRF4
+ADDRLP4 28
+INDIRP4
+CNSTI4 12
+ADDP4
+INDIRF4
+MULF4
+ADDRLP4 24
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRF4
+ADDRLP4 28
+INDIRP4
+CNSTI4 28
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ADDRLP4 24
+INDIRP4
+CNSTI4 8
+ADDP4
+INDIRF4
+ADDRLP4 28
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ADDRLP4 24
+INDIRP4
+CNSTI4 12
+ADDP4
+INDIRF4
+ADDRLP4 28
+INDIRP4
+CNSTI4 60
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ASGNF4
+line 287
+;287:	out[1][0] = in1[1][0] * in2[0][0] + in1[1][1] * in2[1][0] + in1[1][2] * in2[2][0] + in1[1][3] * in2[3][0];
+ADDRLP4 32
+ADDRFP4 4
+INDIRP4
+ASGNP4
+ADDRLP4 36
+ADDRFP4 8
+INDIRP4
+ASGNP4
+ADDRFP4 0
+INDIRP4
+CNSTI4 16
+ADDP4
+ADDRLP4 32
+INDIRP4
+CNSTI4 16
+ADDP4
+INDIRF4
+ADDRLP4 36
+INDIRP4
+INDIRF4
+MULF4
+ADDRLP4 32
+INDIRP4
+CNSTI4 20
+ADDP4
+INDIRF4
+ADDRLP4 36
+INDIRP4
+CNSTI4 16
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ADDRLP4 32
+INDIRP4
+CNSTI4 24
+ADDP4
+INDIRF4
+ADDRLP4 36
+INDIRP4
+CNSTI4 32
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ADDRLP4 32
+INDIRP4
+CNSTI4 28
+ADDP4
+INDIRF4
+ADDRLP4 36
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ASGNF4
+line 288
+;288:	out[1][1] = in1[1][0] * in2[0][1] + in1[1][1] * in2[1][1] + in1[1][2] * in2[2][1] + in1[1][3] * in2[3][1];
+ADDRLP4 40
+ADDRFP4 4
+INDIRP4
+ASGNP4
+ADDRLP4 44
+ADDRFP4 8
+INDIRP4
+ASGNP4
+ADDRFP4 0
+INDIRP4
+CNSTI4 20
+ADDP4
+ADDRLP4 40
+INDIRP4
+CNSTI4 16
+ADDP4
+INDIRF4
+ADDRLP4 44
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRF4
+MULF4
+ADDRLP4 40
+INDIRP4
+CNSTI4 20
+ADDP4
+INDIRF4
+ADDRLP4 44
+INDIRP4
+CNSTI4 20
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ADDRLP4 40
+INDIRP4
+CNSTI4 24
+ADDP4
+INDIRF4
+ADDRLP4 44
+INDIRP4
+CNSTI4 36
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ADDRLP4 40
+INDIRP4
+CNSTI4 28
+ADDP4
+INDIRF4
+ADDRLP4 44
+INDIRP4
+CNSTI4 52
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ASGNF4
+line 289
+;289:	out[1][2] = in1[1][0] * in2[0][2] + in1[1][1] * in2[1][2] + in1[1][2] * in2[2][2] + in1[1][3] * in2[3][2];
+ADDRLP4 48
+ADDRFP4 4
+INDIRP4
+ASGNP4
+ADDRLP4 52
+ADDRFP4 8
+INDIRP4
+ASGNP4
+ADDRFP4 0
+INDIRP4
+CNSTI4 24
+ADDP4
+ADDRLP4 48
+INDIRP4
+CNSTI4 16
+ADDP4
+INDIRF4
+ADDRLP4 52
+INDIRP4
+CNSTI4 8
+ADDP4
+INDIRF4
+MULF4
+ADDRLP4 48
+INDIRP4
+CNSTI4 20
+ADDP4
+INDIRF4
+ADDRLP4 52
+INDIRP4
+CNSTI4 24
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ADDRLP4 48
+INDIRP4
+CNSTI4 24
+ADDP4
+INDIRF4
+ADDRLP4 52
+INDIRP4
+CNSTI4 40
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ADDRLP4 48
+INDIRP4
+CNSTI4 28
+ADDP4
+INDIRF4
+ADDRLP4 52
+INDIRP4
+CNSTI4 56
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ASGNF4
+line 290
+;290:	out[1][3] = in1[1][0] * in2[0][3] + in1[1][1] * in2[1][3] + in1[1][2] * in2[2][3] + in1[1][3] * in2[3][3];
+ADDRLP4 56
+ADDRFP4 4
+INDIRP4
+ASGNP4
+ADDRLP4 60
+ADDRFP4 8
+INDIRP4
+ASGNP4
+ADDRFP4 0
+INDIRP4
+CNSTI4 28
+ADDP4
+ADDRLP4 56
+INDIRP4
+CNSTI4 16
+ADDP4
+INDIRF4
+ADDRLP4 60
+INDIRP4
+CNSTI4 12
+ADDP4
+INDIRF4
+MULF4
+ADDRLP4 56
+INDIRP4
+CNSTI4 20
+ADDP4
+INDIRF4
+ADDRLP4 60
+INDIRP4
+CNSTI4 28
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ADDRLP4 56
+INDIRP4
+CNSTI4 24
+ADDP4
+INDIRF4
+ADDRLP4 60
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ADDRLP4 56
+INDIRP4
+CNSTI4 28
+ADDP4
+INDIRF4
+ADDRLP4 60
+INDIRP4
+CNSTI4 60
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ASGNF4
+line 291
+;291:	out[2][0] = in1[2][0] * in2[0][0] + in1[2][1] * in2[1][0] + in1[2][2] * in2[2][0] + in1[2][3] * in2[3][0];
+ADDRLP4 64
+ADDRFP4 4
+INDIRP4
+ASGNP4
+ADDRLP4 68
+ADDRFP4 8
+INDIRP4
+ASGNP4
+ADDRFP4 0
+INDIRP4
+CNSTI4 32
+ADDP4
+ADDRLP4 64
+INDIRP4
+CNSTI4 32
+ADDP4
+INDIRF4
+ADDRLP4 68
+INDIRP4
+INDIRF4
+MULF4
+ADDRLP4 64
+INDIRP4
+CNSTI4 36
+ADDP4
+INDIRF4
+ADDRLP4 68
+INDIRP4
+CNSTI4 16
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ADDRLP4 64
+INDIRP4
+CNSTI4 40
+ADDP4
+INDIRF4
+ADDRLP4 68
+INDIRP4
+CNSTI4 32
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ADDRLP4 64
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRF4
+ADDRLP4 68
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ASGNF4
+line 292
+;292:	out[2][1] = in1[2][0] * in2[0][1] + in1[2][1] * in2[1][1] + in1[2][2] * in2[2][1] + in1[2][3] * in2[3][1];
+ADDRLP4 72
+ADDRFP4 4
+INDIRP4
+ASGNP4
+ADDRLP4 76
+ADDRFP4 8
+INDIRP4
+ASGNP4
+ADDRFP4 0
+INDIRP4
+CNSTI4 36
+ADDP4
+ADDRLP4 72
+INDIRP4
+CNSTI4 32
+ADDP4
+INDIRF4
+ADDRLP4 76
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRF4
+MULF4
+ADDRLP4 72
+INDIRP4
+CNSTI4 36
+ADDP4
+INDIRF4
+ADDRLP4 76
+INDIRP4
+CNSTI4 20
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ADDRLP4 72
+INDIRP4
+CNSTI4 40
+ADDP4
+INDIRF4
+ADDRLP4 76
+INDIRP4
+CNSTI4 36
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ADDRLP4 72
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRF4
+ADDRLP4 76
+INDIRP4
+CNSTI4 52
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ASGNF4
+line 293
+;293:	out[2][2] = in1[2][0] * in2[0][2] + in1[2][1] * in2[1][2] + in1[2][2] * in2[2][2] + in1[2][3] * in2[3][2];
+ADDRLP4 80
+ADDRFP4 4
+INDIRP4
+ASGNP4
+ADDRLP4 84
+ADDRFP4 8
+INDIRP4
+ASGNP4
+ADDRFP4 0
+INDIRP4
+CNSTI4 40
+ADDP4
+ADDRLP4 80
+INDIRP4
+CNSTI4 32
+ADDP4
+INDIRF4
+ADDRLP4 84
+INDIRP4
+CNSTI4 8
+ADDP4
+INDIRF4
+MULF4
+ADDRLP4 80
+INDIRP4
+CNSTI4 36
+ADDP4
+INDIRF4
+ADDRLP4 84
+INDIRP4
+CNSTI4 24
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ADDRLP4 80
+INDIRP4
+CNSTI4 40
+ADDP4
+INDIRF4
+ADDRLP4 84
+INDIRP4
+CNSTI4 40
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ADDRLP4 80
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRF4
+ADDRLP4 84
+INDIRP4
+CNSTI4 56
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ASGNF4
+line 294
+;294:	out[2][3] = in1[2][0] * in2[0][3] + in1[2][1] * in2[1][3] + in1[2][2] * in2[2][3] + in1[2][3] * in2[3][3];
+ADDRLP4 88
+ADDRFP4 4
+INDIRP4
+ASGNP4
+ADDRLP4 92
+ADDRFP4 8
+INDIRP4
+ASGNP4
+ADDRFP4 0
+INDIRP4
+CNSTI4 44
+ADDP4
+ADDRLP4 88
+INDIRP4
+CNSTI4 32
+ADDP4
+INDIRF4
+ADDRLP4 92
+INDIRP4
+CNSTI4 12
+ADDP4
+INDIRF4
+MULF4
+ADDRLP4 88
+INDIRP4
+CNSTI4 36
+ADDP4
+INDIRF4
+ADDRLP4 92
+INDIRP4
+CNSTI4 28
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ADDRLP4 88
+INDIRP4
+CNSTI4 40
+ADDP4
+INDIRF4
+ADDRLP4 92
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ADDRLP4 88
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRF4
+ADDRLP4 92
+INDIRP4
+CNSTI4 60
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ASGNF4
+line 295
+;295:	out[3][0] = in1[3][0] * in2[0][0] + in1[3][1] * in2[1][0] + in1[3][2] * in2[2][0] + in1[3][3] * in2[3][0];
+ADDRLP4 96
+ADDRFP4 4
+INDIRP4
+ASGNP4
+ADDRLP4 100
+ADDRFP4 8
+INDIRP4
+ASGNP4
+ADDRFP4 0
+INDIRP4
+CNSTI4 48
+ADDP4
+ADDRLP4 96
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRF4
+ADDRLP4 100
+INDIRP4
+INDIRF4
+MULF4
+ADDRLP4 96
+INDIRP4
+CNSTI4 52
+ADDP4
+INDIRF4
+ADDRLP4 100
+INDIRP4
+CNSTI4 16
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ADDRLP4 96
+INDIRP4
+CNSTI4 56
+ADDP4
+INDIRF4
+ADDRLP4 100
+INDIRP4
+CNSTI4 32
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ADDRLP4 96
+INDIRP4
+CNSTI4 60
+ADDP4
+INDIRF4
+ADDRLP4 100
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ASGNF4
+line 296
+;296:	out[3][1] = in1[3][0] * in2[0][1] + in1[3][1] * in2[1][1] + in1[3][2] * in2[2][1] + in1[3][3] * in2[3][1];
+ADDRLP4 104
+ADDRFP4 4
+INDIRP4
+ASGNP4
+ADDRLP4 108
+ADDRFP4 8
+INDIRP4
+ASGNP4
+ADDRFP4 0
+INDIRP4
+CNSTI4 52
+ADDP4
+ADDRLP4 104
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRF4
+ADDRLP4 108
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRF4
+MULF4
+ADDRLP4 104
+INDIRP4
+CNSTI4 52
+ADDP4
+INDIRF4
+ADDRLP4 108
+INDIRP4
+CNSTI4 20
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ADDRLP4 104
+INDIRP4
+CNSTI4 56
+ADDP4
+INDIRF4
+ADDRLP4 108
+INDIRP4
+CNSTI4 36
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ADDRLP4 104
+INDIRP4
+CNSTI4 60
+ADDP4
+INDIRF4
+ADDRLP4 108
+INDIRP4
+CNSTI4 52
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ASGNF4
+line 297
+;297:	out[3][2] = in1[3][0] * in2[0][2] + in1[3][1] * in2[1][2] + in1[3][2] * in2[2][2] + in1[3][3] * in2[3][2];
+ADDRLP4 112
+ADDRFP4 4
+INDIRP4
+ASGNP4
+ADDRLP4 116
+ADDRFP4 8
+INDIRP4
+ASGNP4
+ADDRFP4 0
+INDIRP4
+CNSTI4 56
+ADDP4
+ADDRLP4 112
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRF4
+ADDRLP4 116
+INDIRP4
+CNSTI4 8
+ADDP4
+INDIRF4
+MULF4
+ADDRLP4 112
+INDIRP4
+CNSTI4 52
+ADDP4
+INDIRF4
+ADDRLP4 116
+INDIRP4
+CNSTI4 24
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ADDRLP4 112
+INDIRP4
+CNSTI4 56
+ADDP4
+INDIRF4
+ADDRLP4 116
+INDIRP4
+CNSTI4 40
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ADDRLP4 112
+INDIRP4
+CNSTI4 60
+ADDP4
+INDIRF4
+ADDRLP4 116
+INDIRP4
+CNSTI4 56
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ASGNF4
+line 298
+;298:	out[3][3] = in1[3][0] * in2[0][3] + in1[3][1] * in2[1][3] + in1[3][2] * in2[2][3] + in1[3][3] * in2[3][3];
+ADDRLP4 120
+ADDRFP4 4
+INDIRP4
+ASGNP4
+ADDRLP4 124
+ADDRFP4 8
+INDIRP4
+ASGNP4
+ADDRFP4 0
+INDIRP4
+CNSTI4 60
+ADDP4
+ADDRLP4 120
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRF4
+ADDRLP4 124
+INDIRP4
+CNSTI4 12
+ADDP4
+INDIRF4
+MULF4
+ADDRLP4 120
+INDIRP4
+CNSTI4 52
+ADDP4
+INDIRF4
+ADDRLP4 124
+INDIRP4
+CNSTI4 28
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ADDRLP4 120
+INDIRP4
+CNSTI4 56
+ADDP4
+INDIRF4
+ADDRLP4 124
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ADDRLP4 120
+INDIRP4
+CNSTI4 60
+ADDP4
+INDIRF4
+ADDRLP4 124
+INDIRP4
+CNSTI4 60
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ASGNF4
+line 299
+;299:}
+LABELV $192
+endproc Matrix4x4_Concat 128 0
+export Matrix4x4_CreateFromEntity
+proc Matrix4x4_CreateFromEntity 28 12
+line 302
+;300:
+;301:void Matrix4x4_CreateFromEntity(matrix4x4 out, const vec3_t angles, const vec3_t origin, float scale)
+;302:{
+line 305
+;303:	float	angle, sr, sp, sy, cr, cp, cy;
+;304:
+;305:	if (angles[ROLL])
+ADDRFP4 4
+INDIRP4
+CNSTI4 8
+ADDP4
+INDIRF4
+CNSTF4 0
+EQF4 $194
+line 306
+;306:	{
+line 312
+;307:#ifdef XASH_VECTORIZE_SINCOS
+;308:		SinCosFastVector3(DEG2RAD(angles[YAW]), DEG2RAD(angles[PITCH]), DEG2RAD(angles[ROLL]),
+;309:			&sy, &sp, &sr,
+;310:			&cy, &cp, &cr);
+;311:#else
+;312:		angle = angles[YAW] * (M_PI2 / 360.0f);
+ADDRLP4 8
+ADDRFP4 4
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRF4
+CNSTF4 1016003125
+MULF4
+ASGNF4
+line 313
+;313:		SinCos(angle, &sy, &cy);
+ADDRLP4 8
+INDIRF4
+ARGF4
+ADDRLP4 0
+ARGP4
+ADDRLP4 4
+ARGP4
+ADDRGP4 SinCos
+CALLV
+pop
+line 314
+;314:		angle = angles[PITCH] * (M_PI2 / 360.0f);
+ADDRLP4 8
+ADDRFP4 4
+INDIRP4
+INDIRF4
+CNSTF4 1016003125
+MULF4
+ASGNF4
+line 315
+;315:		SinCos(angle, &sp, &cp);
+ADDRLP4 8
+INDIRF4
+ARGF4
+ADDRLP4 12
+ARGP4
+ADDRLP4 16
+ARGP4
+ADDRGP4 SinCos
+CALLV
+pop
+line 316
+;316:		angle = angles[ROLL] * (M_PI2 / 360.0f);
+ADDRLP4 8
+ADDRFP4 4
+INDIRP4
+CNSTI4 8
+ADDP4
+INDIRF4
+CNSTF4 1016003125
+MULF4
+ASGNF4
+line 317
+;317:		SinCos(angle, &sr, &cr);
+ADDRLP4 8
+INDIRF4
+ARGF4
+ADDRLP4 20
+ARGP4
+ADDRLP4 24
+ARGP4
+ADDRGP4 SinCos
+CALLV
+pop
+line 320
+;318:#endif
+;319:
+;320:		out[0][0] = (cp*cy) * scale;
+ADDRFP4 0
+INDIRP4
+ADDRLP4 16
+INDIRF4
+ADDRLP4 4
+INDIRF4
+MULF4
+ADDRFP4 12
+INDIRF4
+MULF4
+ASGNF4
+line 321
+;321:		out[0][1] = (sr*sp*cy + cr * -sy) * scale;
+ADDRFP4 0
+INDIRP4
+CNSTI4 4
+ADDP4
+ADDRLP4 20
+INDIRF4
+ADDRLP4 12
+INDIRF4
+MULF4
+ADDRLP4 4
+INDIRF4
+MULF4
+ADDRLP4 24
+INDIRF4
+ADDRLP4 0
+INDIRF4
+NEGF4
+MULF4
+ADDF4
+ADDRFP4 12
+INDIRF4
+MULF4
+ASGNF4
+line 322
+;322:		out[0][2] = (cr*sp*cy + -sr * -sy) * scale;
+ADDRFP4 0
+INDIRP4
+CNSTI4 8
+ADDP4
+ADDRLP4 24
+INDIRF4
+ADDRLP4 12
+INDIRF4
+MULF4
+ADDRLP4 4
+INDIRF4
+MULF4
+ADDRLP4 20
+INDIRF4
+NEGF4
+ADDRLP4 0
+INDIRF4
+NEGF4
+MULF4
+ADDF4
+ADDRFP4 12
+INDIRF4
+MULF4
+ASGNF4
+line 323
+;323:		out[0][3] = origin[0];
+ADDRFP4 0
+INDIRP4
+CNSTI4 12
+ADDP4
+ADDRFP4 8
+INDIRP4
+INDIRF4
+ASGNF4
+line 324
+;324:		out[1][0] = (cp*sy) * scale;
+ADDRFP4 0
+INDIRP4
+CNSTI4 16
+ADDP4
+ADDRLP4 16
+INDIRF4
+ADDRLP4 0
+INDIRF4
+MULF4
+ADDRFP4 12
+INDIRF4
+MULF4
+ASGNF4
+line 325
+;325:		out[1][1] = (sr*sp*sy + cr * cy) * scale;
+ADDRFP4 0
+INDIRP4
+CNSTI4 20
+ADDP4
+ADDRLP4 20
+INDIRF4
+ADDRLP4 12
+INDIRF4
+MULF4
+ADDRLP4 0
+INDIRF4
+MULF4
+ADDRLP4 24
+INDIRF4
+ADDRLP4 4
+INDIRF4
+MULF4
+ADDF4
+ADDRFP4 12
+INDIRF4
+MULF4
+ASGNF4
+line 326
+;326:		out[1][2] = (cr*sp*sy + -sr * cy) * scale;
+ADDRFP4 0
+INDIRP4
+CNSTI4 24
+ADDP4
+ADDRLP4 24
+INDIRF4
+ADDRLP4 12
+INDIRF4
+MULF4
+ADDRLP4 0
+INDIRF4
+MULF4
+ADDRLP4 20
+INDIRF4
+NEGF4
+ADDRLP4 4
+INDIRF4
+MULF4
+ADDF4
+ADDRFP4 12
+INDIRF4
+MULF4
+ASGNF4
+line 327
+;327:		out[1][3] = origin[1];
+ADDRFP4 0
+INDIRP4
+CNSTI4 28
+ADDP4
+ADDRFP4 8
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRF4
+ASGNF4
+line 328
+;328:		out[2][0] = (-sp) * scale;
+ADDRFP4 0
+INDIRP4
+CNSTI4 32
+ADDP4
+ADDRLP4 12
+INDIRF4
+NEGF4
+ADDRFP4 12
+INDIRF4
+MULF4
+ASGNF4
+line 329
+;329:		out[2][1] = (sr*cp) * scale;
+ADDRFP4 0
+INDIRP4
+CNSTI4 36
+ADDP4
+ADDRLP4 20
+INDIRF4
+ADDRLP4 16
+INDIRF4
+MULF4
+ADDRFP4 12
+INDIRF4
+MULF4
+ASGNF4
+line 330
+;330:		out[2][2] = (cr*cp) * scale;
+ADDRFP4 0
+INDIRP4
+CNSTI4 40
+ADDP4
+ADDRLP4 24
+INDIRF4
+ADDRLP4 16
+INDIRF4
+MULF4
+ADDRFP4 12
+INDIRF4
+MULF4
+ASGNF4
+line 331
+;331:		out[2][3] = origin[2];
+ADDRFP4 0
+INDIRP4
+CNSTI4 44
+ADDP4
+ADDRFP4 8
+INDIRP4
+CNSTI4 8
+ADDP4
+INDIRF4
+ASGNF4
+line 332
+;332:		out[3][0] = 0.0f;
+ADDRFP4 0
+INDIRP4
+CNSTI4 48
+ADDP4
+CNSTF4 0
+ASGNF4
+line 333
+;333:		out[3][1] = 0.0f;
+ADDRFP4 0
+INDIRP4
+CNSTI4 52
+ADDP4
+CNSTF4 0
+ASGNF4
+line 334
+;334:		out[3][2] = 0.0f;
+ADDRFP4 0
+INDIRP4
+CNSTI4 56
+ADDP4
+CNSTF4 0
+ASGNF4
+line 335
+;335:		out[3][3] = 1.0f;
+ADDRFP4 0
+INDIRP4
+CNSTI4 60
+ADDP4
+CNSTF4 1065353216
+ASGNF4
+line 336
+;336:	}
+ADDRGP4 $195
+JUMPV
+LABELV $194
+line 337
+;337:	else if (angles[PITCH])
+ADDRFP4 4
+INDIRP4
+INDIRF4
+CNSTF4 0
+EQF4 $196
+line 338
+;338:	{
+line 344
+;339:#ifdef XASH_VECTORIZE_SINCOS
+;340:		SinCosFastVector2(DEG2RAD(angles[YAW]), DEG2RAD(angles[PITCH]),
+;341:			&sy, &sp,
+;342:			&cy, &cp);
+;343:#else
+;344:		angle = angles[YAW] * (M_PI2 / 360.0f);
+ADDRLP4 8
+ADDRFP4 4
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRF4
+CNSTF4 1016003125
+MULF4
+ASGNF4
+line 345
+;345:		SinCos(angle, &sy, &cy);
+ADDRLP4 8
+INDIRF4
+ARGF4
+ADDRLP4 0
+ARGP4
+ADDRLP4 4
+ARGP4
+ADDRGP4 SinCos
+CALLV
+pop
+line 346
+;346:		angle = angles[PITCH] * (M_PI2 / 360.0f);
+ADDRLP4 8
+ADDRFP4 4
+INDIRP4
+INDIRF4
+CNSTF4 1016003125
+MULF4
+ASGNF4
+line 347
+;347:		SinCos(angle, &sp, &cp);
+ADDRLP4 8
+INDIRF4
+ARGF4
+ADDRLP4 12
+ARGP4
+ADDRLP4 16
+ARGP4
+ADDRGP4 SinCos
+CALLV
+pop
+line 350
+;348:#endif
+;349:
+;350:		out[0][0] = (cp*cy) * scale;
+ADDRFP4 0
+INDIRP4
+ADDRLP4 16
+INDIRF4
+ADDRLP4 4
+INDIRF4
+MULF4
+ADDRFP4 12
+INDIRF4
+MULF4
+ASGNF4
+line 351
+;351:		out[0][1] = (-sy) * scale;
+ADDRFP4 0
+INDIRP4
+CNSTI4 4
+ADDP4
+ADDRLP4 0
+INDIRF4
+NEGF4
+ADDRFP4 12
+INDIRF4
+MULF4
+ASGNF4
+line 352
+;352:		out[0][2] = (sp*cy) * scale;
+ADDRFP4 0
+INDIRP4
+CNSTI4 8
+ADDP4
+ADDRLP4 12
+INDIRF4
+ADDRLP4 4
+INDIRF4
+MULF4
+ADDRFP4 12
+INDIRF4
+MULF4
+ASGNF4
+line 353
+;353:		out[0][3] = origin[0];
+ADDRFP4 0
+INDIRP4
+CNSTI4 12
+ADDP4
+ADDRFP4 8
+INDIRP4
+INDIRF4
+ASGNF4
+line 354
+;354:		out[1][0] = (cp*sy) * scale;
+ADDRFP4 0
+INDIRP4
+CNSTI4 16
+ADDP4
+ADDRLP4 16
+INDIRF4
+ADDRLP4 0
+INDIRF4
+MULF4
+ADDRFP4 12
+INDIRF4
+MULF4
+ASGNF4
+line 355
+;355:		out[1][1] = (cy)* scale;
+ADDRFP4 0
+INDIRP4
+CNSTI4 20
+ADDP4
+ADDRLP4 4
+INDIRF4
+ADDRFP4 12
+INDIRF4
+MULF4
+ASGNF4
+line 356
+;356:		out[1][2] = (sp*sy) * scale;
+ADDRFP4 0
+INDIRP4
+CNSTI4 24
+ADDP4
+ADDRLP4 12
+INDIRF4
+ADDRLP4 0
+INDIRF4
+MULF4
+ADDRFP4 12
+INDIRF4
+MULF4
+ASGNF4
+line 357
+;357:		out[1][3] = origin[1];
+ADDRFP4 0
+INDIRP4
+CNSTI4 28
+ADDP4
+ADDRFP4 8
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRF4
+ASGNF4
+line 358
+;358:		out[2][0] = (-sp) * scale;
+ADDRFP4 0
+INDIRP4
+CNSTI4 32
+ADDP4
+ADDRLP4 12
+INDIRF4
+NEGF4
+ADDRFP4 12
+INDIRF4
+MULF4
+ASGNF4
+line 359
+;359:		out[2][1] = 0.0f;
+ADDRFP4 0
+INDIRP4
+CNSTI4 36
+ADDP4
+CNSTF4 0
+ASGNF4
+line 360
+;360:		out[2][2] = (cp)* scale;
+ADDRFP4 0
+INDIRP4
+CNSTI4 40
+ADDP4
+ADDRLP4 16
+INDIRF4
+ADDRFP4 12
+INDIRF4
+MULF4
+ASGNF4
+line 361
+;361:		out[2][3] = origin[2];
+ADDRFP4 0
+INDIRP4
+CNSTI4 44
+ADDP4
+ADDRFP4 8
+INDIRP4
+CNSTI4 8
+ADDP4
+INDIRF4
+ASGNF4
+line 362
+;362:		out[3][0] = 0.0f;
+ADDRFP4 0
+INDIRP4
+CNSTI4 48
+ADDP4
+CNSTF4 0
+ASGNF4
+line 363
+;363:		out[3][1] = 0.0f;
+ADDRFP4 0
+INDIRP4
+CNSTI4 52
+ADDP4
+CNSTF4 0
+ASGNF4
+line 364
+;364:		out[3][2] = 0.0f;
+ADDRFP4 0
+INDIRP4
+CNSTI4 56
+ADDP4
+CNSTF4 0
+ASGNF4
+line 365
+;365:		out[3][3] = 1.0f;
+ADDRFP4 0
+INDIRP4
+CNSTI4 60
+ADDP4
+CNSTF4 1065353216
+ASGNF4
+line 366
+;366:	}
+ADDRGP4 $197
+JUMPV
+LABELV $196
+line 367
+;367:	else if (angles[YAW])
+ADDRFP4 4
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRF4
+CNSTF4 0
+EQF4 $198
+line 368
+;368:	{
+line 369
+;369:		angle = angles[YAW] * (M_PI2 / 360.0f);
+ADDRLP4 8
+ADDRFP4 4
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRF4
+CNSTF4 1016003125
+MULF4
+ASGNF4
+line 370
+;370:		SinCos(angle, &sy, &cy);
+ADDRLP4 8
+INDIRF4
+ARGF4
+ADDRLP4 0
+ARGP4
+ADDRLP4 4
+ARGP4
+ADDRGP4 SinCos
+CALLV
+pop
+line 372
+;371:
+;372:		out[0][0] = (cy)* scale;
+ADDRFP4 0
+INDIRP4
+ADDRLP4 4
+INDIRF4
+ADDRFP4 12
+INDIRF4
+MULF4
+ASGNF4
+line 373
+;373:		out[0][1] = (-sy) * scale;
+ADDRFP4 0
+INDIRP4
+CNSTI4 4
+ADDP4
+ADDRLP4 0
+INDIRF4
+NEGF4
+ADDRFP4 12
+INDIRF4
+MULF4
+ASGNF4
+line 374
+;374:		out[0][2] = 0.0f;
+ADDRFP4 0
+INDIRP4
+CNSTI4 8
+ADDP4
+CNSTF4 0
+ASGNF4
+line 375
+;375:		out[0][3] = origin[0];
+ADDRFP4 0
+INDIRP4
+CNSTI4 12
+ADDP4
+ADDRFP4 8
+INDIRP4
+INDIRF4
+ASGNF4
+line 376
+;376:		out[1][0] = (sy)* scale;
+ADDRFP4 0
+INDIRP4
+CNSTI4 16
+ADDP4
+ADDRLP4 0
+INDIRF4
+ADDRFP4 12
+INDIRF4
+MULF4
+ASGNF4
+line 377
+;377:		out[1][1] = (cy)* scale;
+ADDRFP4 0
+INDIRP4
+CNSTI4 20
+ADDP4
+ADDRLP4 4
+INDIRF4
+ADDRFP4 12
+INDIRF4
+MULF4
+ASGNF4
+line 378
+;378:		out[1][2] = 0.0f;
+ADDRFP4 0
+INDIRP4
+CNSTI4 24
+ADDP4
+CNSTF4 0
+ASGNF4
+line 379
+;379:		out[1][3] = origin[1];
+ADDRFP4 0
+INDIRP4
+CNSTI4 28
+ADDP4
+ADDRFP4 8
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRF4
+ASGNF4
+line 380
+;380:		out[2][0] = 0.0f;
+ADDRFP4 0
+INDIRP4
+CNSTI4 32
+ADDP4
+CNSTF4 0
+ASGNF4
+line 381
+;381:		out[2][1] = 0.0f;
+ADDRFP4 0
+INDIRP4
+CNSTI4 36
+ADDP4
+CNSTF4 0
+ASGNF4
+line 382
+;382:		out[2][2] = scale;
+ADDRFP4 0
+INDIRP4
+CNSTI4 40
+ADDP4
+ADDRFP4 12
+INDIRF4
+ASGNF4
+line 383
+;383:		out[2][3] = origin[2];
+ADDRFP4 0
+INDIRP4
+CNSTI4 44
+ADDP4
+ADDRFP4 8
+INDIRP4
+CNSTI4 8
+ADDP4
+INDIRF4
+ASGNF4
+line 384
+;384:		out[3][0] = 0.0f;
+ADDRFP4 0
+INDIRP4
+CNSTI4 48
+ADDP4
+CNSTF4 0
+ASGNF4
+line 385
+;385:		out[3][1] = 0.0f;
+ADDRFP4 0
+INDIRP4
+CNSTI4 52
+ADDP4
+CNSTF4 0
+ASGNF4
+line 386
+;386:		out[3][2] = 0.0f;
+ADDRFP4 0
+INDIRP4
+CNSTI4 56
+ADDP4
+CNSTF4 0
+ASGNF4
+line 387
+;387:		out[3][3] = 1.0f;
+ADDRFP4 0
+INDIRP4
+CNSTI4 60
+ADDP4
+CNSTF4 1065353216
+ASGNF4
+line 388
+;388:	}
+ADDRGP4 $199
+JUMPV
+LABELV $198
+line 390
+;389:	else
+;390:	{
+line 391
+;391:		out[0][0] = scale;
+ADDRFP4 0
+INDIRP4
+ADDRFP4 12
+INDIRF4
+ASGNF4
+line 392
+;392:		out[0][1] = 0.0f;
+ADDRFP4 0
+INDIRP4
+CNSTI4 4
+ADDP4
+CNSTF4 0
+ASGNF4
+line 393
+;393:		out[0][2] = 0.0f;
+ADDRFP4 0
+INDIRP4
+CNSTI4 8
+ADDP4
+CNSTF4 0
+ASGNF4
+line 394
+;394:		out[0][3] = origin[0];
+ADDRFP4 0
+INDIRP4
+CNSTI4 12
+ADDP4
+ADDRFP4 8
+INDIRP4
+INDIRF4
+ASGNF4
+line 395
+;395:		out[1][0] = 0.0f;
+ADDRFP4 0
+INDIRP4
+CNSTI4 16
+ADDP4
+CNSTF4 0
+ASGNF4
+line 396
+;396:		out[1][1] = scale;
+ADDRFP4 0
+INDIRP4
+CNSTI4 20
+ADDP4
+ADDRFP4 12
+INDIRF4
+ASGNF4
+line 397
+;397:		out[1][2] = 0.0f;
+ADDRFP4 0
+INDIRP4
+CNSTI4 24
+ADDP4
+CNSTF4 0
+ASGNF4
+line 398
+;398:		out[1][3] = origin[1];
+ADDRFP4 0
+INDIRP4
+CNSTI4 28
+ADDP4
+ADDRFP4 8
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRF4
+ASGNF4
+line 399
+;399:		out[2][0] = 0.0f;
+ADDRFP4 0
+INDIRP4
+CNSTI4 32
+ADDP4
+CNSTF4 0
+ASGNF4
+line 400
+;400:		out[2][1] = 0.0f;
+ADDRFP4 0
+INDIRP4
+CNSTI4 36
+ADDP4
+CNSTF4 0
+ASGNF4
+line 401
+;401:		out[2][2] = scale;
+ADDRFP4 0
+INDIRP4
+CNSTI4 40
+ADDP4
+ADDRFP4 12
+INDIRF4
+ASGNF4
+line 402
+;402:		out[2][3] = origin[2];
+ADDRFP4 0
+INDIRP4
+CNSTI4 44
+ADDP4
+ADDRFP4 8
+INDIRP4
+CNSTI4 8
+ADDP4
+INDIRF4
+ASGNF4
+line 403
+;403:		out[3][0] = 0.0f;
+ADDRFP4 0
+INDIRP4
+CNSTI4 48
+ADDP4
+CNSTF4 0
+ASGNF4
+line 404
+;404:		out[3][1] = 0.0f;
+ADDRFP4 0
+INDIRP4
+CNSTI4 52
+ADDP4
+CNSTF4 0
+ASGNF4
+line 405
+;405:		out[3][2] = 0.0f;
+ADDRFP4 0
+INDIRP4
+CNSTI4 56
+ADDP4
+CNSTF4 0
+ASGNF4
+line 406
+;406:		out[3][3] = 1.0f;
+ADDRFP4 0
+INDIRP4
+CNSTI4 60
+ADDP4
+CNSTF4 1065353216
+ASGNF4
+line 407
+;407:	}
+LABELV $199
+LABELV $197
+LABELV $195
+line 408
+;408:}
+LABELV $193
+endproc Matrix4x4_CreateFromEntity 28 12
+export Matrix4x4_ConvertToEntity
+proc Matrix4x4_ConvertToEntity 36 8
+line 411
+;409:
+;410:void Matrix4x4_ConvertToEntity(vec4_t *in, vec3_t angles, vec3_t origin)
+;411:{
+line 412
+;412:	float xyDist = sqrt(in[0][0] * in[0][0] + in[1][0] * in[1][0]);
+ADDRLP4 4
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 8
+ADDRLP4 4
+INDIRP4
+INDIRF4
+ASGNF4
+ADDRLP4 8
+INDIRF4
+ADDRLP4 8
+INDIRF4
+MULF4
+ADDRLP4 4
+INDIRP4
+CNSTI4 16
+ADDP4
+INDIRF4
+ADDRLP4 4
+INDIRP4
+CNSTI4 16
+ADDP4
+INDIRF4
+MULF4
+ADDF4
+ARGF4
+ADDRLP4 12
+ADDRGP4 sqrt
+CALLF4
+ASGNF4
+ADDRLP4 0
+ADDRLP4 12
+INDIRF4
+ASGNF4
+line 415
+;413:
+;414:	// enough here to get angles?
+;415:	if (xyDist > 0.001f)
+ADDRLP4 0
+INDIRF4
+CNSTF4 981668463
+LEF4 $201
+line 416
+;416:	{
+line 417
+;417:		angles[0] = RAD2DEG(atan2(-in[2][0], xyDist));
+ADDRFP4 0
+INDIRP4
+CNSTI4 32
+ADDP4
+INDIRF4
+NEGF4
+ARGF4
+ADDRLP4 0
+INDIRF4
+ARGF4
+ADDRLP4 16
+ADDRGP4 atan2
+CALLF4
+ASGNF4
+ADDRFP4 4
+INDIRP4
+ADDRLP4 16
+INDIRF4
+CNSTF4 1113927393
+MULF4
+ASGNF4
+line 418
+;418:		angles[1] = RAD2DEG(atan2(in[1][0], in[0][0]));
+ADDRLP4 20
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 20
+INDIRP4
+CNSTI4 16
+ADDP4
+INDIRF4
+ARGF4
+ADDRLP4 20
+INDIRP4
+INDIRF4
+ARGF4
+ADDRLP4 24
+ADDRGP4 atan2
+CALLF4
+ASGNF4
+ADDRFP4 4
+INDIRP4
+CNSTI4 4
+ADDP4
+ADDRLP4 24
+INDIRF4
+CNSTF4 1113927393
+MULF4
+ASGNF4
+line 419
+;419:		angles[2] = RAD2DEG(atan2(in[2][1], in[2][2]));
+ADDRLP4 28
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 28
+INDIRP4
+CNSTI4 36
+ADDP4
+INDIRF4
+ARGF4
+ADDRLP4 28
+INDIRP4
+CNSTI4 40
+ADDP4
+INDIRF4
+ARGF4
+ADDRLP4 32
+ADDRGP4 atan2
+CALLF4
+ASGNF4
+ADDRFP4 4
+INDIRP4
+CNSTI4 8
+ADDP4
+ADDRLP4 32
+INDIRF4
+CNSTF4 1113927393
+MULF4
+ASGNF4
+line 420
+;420:	}
+ADDRGP4 $202
+JUMPV
+LABELV $201
+line 422
+;421:	else	// forward is mostly Z, gimbal lock
+;422:	{
+line 423
+;423:		angles[0] = RAD2DEG(atan2(-in[2][0], xyDist));
+ADDRFP4 0
+INDIRP4
+CNSTI4 32
+ADDP4
+INDIRF4
+NEGF4
+ARGF4
+ADDRLP4 0
+INDIRF4
+ARGF4
+ADDRLP4 16
+ADDRGP4 atan2
+CALLF4
+ASGNF4
+ADDRFP4 4
+INDIRP4
+ADDRLP4 16
+INDIRF4
+CNSTF4 1113927393
+MULF4
+ASGNF4
+line 424
+;424:		angles[1] = RAD2DEG(atan2(-in[0][1], in[1][1]));
+ADDRLP4 20
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 20
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRF4
+NEGF4
+ARGF4
+ADDRLP4 20
+INDIRP4
+CNSTI4 20
+ADDP4
+INDIRF4
+ARGF4
+ADDRLP4 24
+ADDRGP4 atan2
+CALLF4
+ASGNF4
+ADDRFP4 4
+INDIRP4
+CNSTI4 4
+ADDP4
+ADDRLP4 24
+INDIRF4
+CNSTF4 1113927393
+MULF4
+ASGNF4
+line 425
+;425:		angles[2] = 0.0f;
+ADDRFP4 4
+INDIRP4
+CNSTI4 8
+ADDP4
+CNSTF4 0
+ASGNF4
+line 426
+;426:	}
+LABELV $202
+line 428
+;427:
+;428:	origin[0] = in[0][3];
+ADDRFP4 8
+INDIRP4
+ADDRFP4 0
+INDIRP4
+CNSTI4 12
+ADDP4
+INDIRF4
+ASGNF4
+line 429
+;429:	origin[1] = in[1][3];
+ADDRFP4 8
+INDIRP4
+CNSTI4 4
+ADDP4
+ADDRFP4 0
+INDIRP4
+CNSTI4 28
+ADDP4
+INDIRF4
+ASGNF4
+line 430
+;430:	origin[2] = in[2][3];
+ADDRFP4 8
+INDIRP4
+CNSTI4 8
+ADDP4
+ADDRFP4 0
+INDIRP4
+CNSTI4 44
+ADDP4
+INDIRF4
+ASGNF4
+line 431
+;431:}
+LABELV $200
+endproc Matrix4x4_ConvertToEntity 36 8
+export rotateAboutOrigin
+proc rotateAboutOrigin 16 4
+line 434
+;432:
+;433:void rotateAboutOrigin(float x, float y, float rotation, vec2_t out)
+;434:{
+line 435
+;435:	out[0] = cosf(DEG2RAD(-rotation)) * x + sinf(DEG2RAD(-rotation)) * y;
+ADDRFP4 8
+INDIRF4
+NEGF4
+CNSTF4 1016003125
+MULF4
+ARGF4
+ADDRLP4 0
+ADDRGP4 cosf
+CALLF4
+ASGNF4
+ADDRFP4 8
+INDIRF4
+NEGF4
+CNSTF4 1016003125
+MULF4
+ARGF4
+ADDRLP4 4
+ADDRGP4 sinf
+CALLF4
+ASGNF4
+ADDRFP4 12
+INDIRP4
+ADDRLP4 0
+INDIRF4
+ADDRFP4 0
+INDIRF4
+MULF4
+ADDRLP4 4
+INDIRF4
+ADDRFP4 4
+INDIRF4
+MULF4
+ADDF4
+ASGNF4
+line 436
+;436:	out[1] = cosf(DEG2RAD(-rotation)) * y - sinf(DEG2RAD(-rotation)) * x;
+ADDRFP4 8
+INDIRF4
+NEGF4
+CNSTF4 1016003125
+MULF4
+ARGF4
+ADDRLP4 8
+ADDRGP4 cosf
+CALLF4
+ASGNF4
+ADDRFP4 8
+INDIRF4
+NEGF4
+CNSTF4 1016003125
+MULF4
+ARGF4
+ADDRLP4 12
+ADDRGP4 sinf
+CALLF4
+ASGNF4
+ADDRFP4 12
+INDIRP4
+CNSTI4 4
+ADDP4
+ADDRLP4 8
+INDIRF4
+ADDRFP4 4
+INDIRF4
+MULF4
+ADDRLP4 12
+INDIRF4
+ADDRFP4 0
+INDIRF4
+MULF4
+SUBF4
+ASGNF4
+line 437
+;437:}
+LABELV $203
+endproc rotateAboutOrigin 16 4
+export CG_ConvertFromVR
+proc CG_ConvertFromVR 44 16
+line 440
+;438:
+;439:void CG_ConvertFromVR(vec3_t in, vec3_t offset, vec3_t out)
+;440:{
+line 448
+;441:	vec2_t r;
+;442:	vec3_t vrSpace, temp;
+;443:
+;444:#ifdef USE_VR
+;445:	float angleYaw, deltaYaw;
+;446:#endif
+;447:
+;448:	VectorSet(vrSpace, in[2], in[0], in[1]);
+ADDRLP4 40
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 0
+ADDRLP4 40
+INDIRP4
+CNSTI4 8
+ADDP4
+INDIRF4
+ASGNF4
+ADDRLP4 0+4
+ADDRLP4 40
+INDIRP4
+INDIRF4
+ASGNF4
+ADDRLP4 0+8
+ADDRFP4 0
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRF4
+ASGNF4
+line 452
+;449:
+;450:#ifdef USE_VR
+;451:	// adjust to the view angles
+;452:	deltaYaw = SHORT2ANGLE(cg.predictedPlayerState.delta_angles[YAW]);
+ADDRLP4 32
+ADDRGP4 cg+234796+56+4
+INDIRI4
+CVIF4 4
+CNSTF4 1001652224
+MULF4
+ASGNF4
+line 454
+;453:
+;454:	if ( cg.snap->ps.pm_flags & PMF_FOLLOW ) {
+ADDRGP4 cg+36
+INDIRP4
+CNSTI4 56
+ADDP4
+INDIRI4
+CNSTI4 4096
+BANDI4
+CNSTI4 0
+EQI4 $210
+line 456
+;455:		//Don't include delta if following another player
+;456:		deltaYaw = 0.0f;
+ADDRLP4 32
+CNSTF4 0
+ASGNF4
+line 457
+;457:	}
+LABELV $210
+line 465
+;458:#endif
+;459:
+;460:#ifdef USE_NATIVE_HACK
+;461:	angleYaw = deltaYaw + (vrinfo->clientviewangles[YAW] - vrinfo->hmdinfo.angles.actual[YAW]);
+;462:#endif
+;463:
+;464:#ifdef USE_VR_QVM
+;465:	angleYaw = deltaYaw + cg.refdefViewAngles[YAW] - cg.predictedPlayerState.viewangles[YAW];
+ADDRLP4 36
+ADDRLP4 32
+INDIRF4
+ADDRGP4 cg+237172+4
+INDIRF4
+ADDF4
+ADDRGP4 cg+234796+152+4
+INDIRF4
+SUBF4
+ASGNF4
+line 469
+;466:#endif
+;467:
+;468:#ifdef USE_VR
+;469:	rotateAboutOrigin(vrSpace[0], vrSpace[1], angleYaw, r);
+ADDRLP4 0
+INDIRF4
+ARGF4
+ADDRLP4 0+4
+INDIRF4
+ARGF4
+ADDRLP4 36
+INDIRF4
+ARGF4
+ADDRLP4 24
+ARGP4
+ADDRGP4 rotateAboutOrigin
+CALLV
+pop
+line 472
+;470:#endif
+;471:
+;472:	vrSpace[0] = -r[0];
+ADDRLP4 0
+ADDRLP4 24
+INDIRF4
+NEGF4
+ASGNF4
+line 473
+;473:	vrSpace[1] = -r[1];
+ADDRLP4 0+4
+ADDRLP4 24+4
+INDIRF4
+NEGF4
+ASGNF4
+line 475
+;474:
+;475:	VectorScale(vrSpace, cg.worldscale, temp);
+ADDRLP4 12
+ADDRLP4 0
+INDIRF4
+ADDRGP4 cg+282976
+INDIRF4
+MULF4
+ASGNF4
+ADDRLP4 12+4
+ADDRLP4 0+4
+INDIRF4
+ADDRGP4 cg+282976
+INDIRF4
+MULF4
+ASGNF4
+ADDRLP4 12+8
+ADDRLP4 0+8
+INDIRF4
+ADDRGP4 cg+282976
+INDIRF4
+MULF4
+ASGNF4
+line 477
+;476:
+;477:	if (offset) {
+ADDRFP4 4
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $228
+line 478
+;478:		VectorAdd(temp, offset, out);
+ADDRFP4 8
+INDIRP4
+ADDRLP4 12
+INDIRF4
+ADDRFP4 4
+INDIRP4
+INDIRF4
+ADDF4
+ASGNF4
+ADDRFP4 8
+INDIRP4
+CNSTI4 4
+ADDP4
+ADDRLP4 12+4
+INDIRF4
+ADDRFP4 4
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRF4
+ADDF4
+ASGNF4
+ADDRFP4 8
+INDIRP4
+CNSTI4 8
+ADDP4
+ADDRLP4 12+8
+INDIRF4
+ADDRFP4 4
+INDIRP4
+CNSTI4 8
+ADDP4
+INDIRF4
+ADDF4
+ASGNF4
+line 479
+;479:	}
+ADDRGP4 $229
+JUMPV
+LABELV $228
+line 480
+;480:	else {
+line 481
+;481:		VectorCopy(temp, out);
+ADDRFP4 8
+INDIRP4
+ADDRLP4 12
+INDIRB
+ASGNB 12
+line 482
+;482:	}
+LABELV $229
+line 483
+;483:}
+LABELV $204
+endproc CG_ConvertFromVR 44 16
+export CG_CalculateVRPositionInWorld
+proc CG_CalculateVRPositionInWorld 56 12
+line 486
+;484:
+;485:// TODO create and use preprocessor #define WORDSCALE 32 in q_shared
+;486:static void CG_CalculateVRPositionInWorld(vec3_t in_position, vec3_t in_orientation, vec3_t origin, vec3_t angles) {
+line 496
+;487:	float deltaYaw;
+;488:	//Use absolute position for the faked 6DoF
+;489:	vec3_t hmdOrigin, offset, tmp;
+;490:
+;491:	// get hmd origin in real world
+;492:#ifdef USE_NATIVE_HACK
+;493:	VectorCopy(vrinfo->hmdorigin, hmdOrigin);
+;494:#endif
+;495:#ifdef USE_VR_QVM
+;496:	VectorCopy(cg.predictedPlayerState.HMD_raw_origin, hmdOrigin);
+ADDRLP4 12
+ADDRGP4 cg+234796+484
+INDIRB
+ASGNB 12
+line 499
+;497:#endif
+;498:
+;499:	VectorSubtract(in_position, hmdOrigin, offset);
+ADDRLP4 40
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 0
+ADDRLP4 40
+INDIRP4
+INDIRF4
+ADDRLP4 12
+INDIRF4
+SUBF4
+ASGNF4
+ADDRLP4 0+4
+ADDRLP4 40
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRF4
+ADDRLP4 12+4
+INDIRF4
+SUBF4
+ASGNF4
+ADDRLP4 0+8
+ADDRFP4 0
+INDIRP4
+CNSTI4 8
+ADDP4
+INDIRF4
+ADDRLP4 12+8
+INDIRF4
+SUBF4
+ASGNF4
+line 500
+;500:	offset[1] = 0; // up/down is index 1 in this case
+ADDRLP4 0+4
+CNSTF4 0
+ASGNF4
+line 501
+;501:	CG_ConvertFromVR(offset, cg.refdef.vieworg, origin);
+ADDRLP4 0
+ARGP4
+ADDRGP4 cg+236804+24
+ARGP4
+ADDRFP4 8
+INDIRP4
+ARGP4
+ADDRGP4 CG_ConvertFromVR
+CALLV
+pop
+line 504
+;502:	//origin[2] -= PLAYER_HEIGHT;
+;503:	//origin[2] -= cg.heightStand;
+;504:	origin[2] += in_position[1] * cg.worldscale;
+ADDRLP4 44
+ADDRFP4 8
+INDIRP4
+CNSTI4 8
+ADDP4
+ASGNP4
+ADDRLP4 44
+INDIRP4
+ADDRLP4 44
+INDIRP4
+INDIRF4
+ADDRFP4 0
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRF4
+ADDRGP4 cg+282976
+INDIRF4
+MULF4
+ADDF4
+ASGNF4
+line 506
+;505:
+;506:	VectorCopy(in_orientation, angles);
+ADDRFP4 12
+INDIRP4
+ADDRFP4 4
+INDIRP4
+INDIRB
+ASGNB 12
+line 509
+;507:
+;508:	// re-calculate angle considering spawnpoint angles
+;509:	deltaYaw = SHORT2ANGLE(cg.predictedPlayerState.delta_angles[YAW]);
+ADDRLP4 24
+ADDRGP4 cg+234796+56+4
+INDIRI4
+CVIF4 4
+CNSTF4 1001652224
+MULF4
+ASGNF4
+line 517
+;510:
+;511:#ifdef USE_NATIVE_HACK
+;512:	angles[YAW] += deltaYaw + (vrinfo->clientviewangles[YAW] - vrinfo->hmdinfo.angles.actual[YAW]);
+;513:#endif
+;514:
+;515:#ifdef USE_VR_QVM
+;516:	// GUNNM FIXME native and non-native VM should use deltaYaw in the same way
+;517:	angles[YAW] += AngleMod( /*deltaYaw +*/ (cg.refdefViewAngles[YAW] - cg.predictedPlayerState.viewangles[YAW]));
+ADDRGP4 cg+237172+4
+INDIRF4
+ADDRGP4 cg+234796+152+4
+INDIRF4
+SUBF4
+ARGF4
+ADDRLP4 48
+ADDRGP4 AngleMod
+CALLF4
+ASGNF4
+ADDRLP4 52
+ADDRFP4 12
+INDIRP4
+CNSTI4 4
+ADDP4
+ASGNP4
+ADDRLP4 52
+INDIRP4
+ADDRLP4 52
+INDIRP4
+INDIRF4
+ADDRLP4 48
+INDIRF4
+ADDF4
+ASGNF4
+line 519
+;518:#endif
+;519:}
+LABELV $232
+endproc CG_CalculateVRPositionInWorld 56 12
+export CG_CalculateVROffHandPosition
+proc CG_CalculateVROffHandPosition 0 16
+line 522
+;520:
+;521:void CG_CalculateVROffHandPosition(vec3_t origin, vec3_t angles)
+;522:{
+line 527
+;523:#ifdef USE_NATIVE_HACK
+;524:	vrController_t ctrl = vrinfo->controllers[SideLEFT];
+;525:	CG_CalculateVRPositionInWorld(ctrl.position.actual, ctrl.angles.actual, origin, angles);
+;526:#else
+;527:	CG_CalculateVRPositionInWorld(cg.snap->ps.left_hand_position, cg.snap->ps.left_hand_angles, origin, angles);
+ADDRGP4 cg+36
+INDIRP4
+CNSTI4 576
+ADDP4
+ARGP4
+ADDRGP4 cg+36
+INDIRP4
+CNSTI4 588
+ADDP4
+ARGP4
+ADDRFP4 0
+INDIRP4
+ARGP4
+ADDRFP4 4
+INDIRP4
+ARGP4
+ADDRGP4 CG_CalculateVRPositionInWorld
+CALLV
+pop
+line 529
+;528:#endif
+;529:}
+LABELV $251
+endproc CG_CalculateVROffHandPosition 0 16
+export CG_CalculateWeaponPosition_VR_6Dof
+proc CG_CalculateWeaponPosition_VR_6Dof 0 16
+line 532
+;530:
+;531:void CG_CalculateWeaponPosition_VR_6Dof(vec3_t origin, vec3_t angles)
+;532:{
+line 533
+;533:	if (cg.demoPlayback || (cg.snap->ps.pm_flags & PMF_FOLLOW))
+ADDRGP4 cg+8
+INDIRI4
+CNSTI4 0
+NEI4 $259
+ADDRGP4 cg+36
+INDIRP4
+CNSTI4 56
+ADDP4
+INDIRI4
+CNSTI4 4096
+BANDI4
+CNSTI4 0
+EQI4 $255
+LABELV $259
+line 534
+;534:	{
+line 535
+;535:		CG_CalculateWeaponPosition(origin, angles);
+ADDRFP4 0
+INDIRP4
+ARGP4
+ADDRFP4 4
+INDIRP4
+ARGP4
+ADDRGP4 CG_CalculateWeaponPosition
+CALLV
+pop
+line 536
+;536:		return;
+ADDRGP4 $254
+JUMPV
+LABELV $255
+line 545
+;537:	}
+;538:
+;539:#ifdef USE_NATIVE_HACK
+;540:	{
+;541:		vrController_t ctrl = vrinfo->controllers[SideRIGHT];
+;542:		CG_CalculateVRPositionInWorld(ctrl.position.actual, ctrl.angles.actual, origin, angles);
+;543:	}
+;544:#else
+;545:	{
+line 547
+;546:
+;547:		CG_CalculateVRPositionInWorld(cg.predictedPlayerState.right_hand_position, cg.predictedPlayerState.right_hand_angles, origin, angles);
+ADDRGP4 cg+234796+520
+ARGP4
+ADDRGP4 cg+234796+508
+ARGP4
+ADDRFP4 0
+INDIRP4
+ARGP4
+ADDRFP4 4
+INDIRP4
+ARGP4
+ADDRGP4 CG_CalculateVRPositionInWorld
+CALLV
+pop
+line 549
+;548:		//CG_CalculateVRPositionInWorld(cg.snap->ps.right_hand_position, cg.snap->ps.right_hand_angles, origin, angles); // TODO if others players
+;549:	}
+line 551
+;550:#endif
+;551:}
+LABELV $254
+endproc CG_CalculateWeaponPosition_VR_6Dof 0 16
+export CG_CalculateWeaponPosition_VR_3Dof
+proc CG_CalculateWeaponPosition_VR_3Dof 376 16
+line 554
+;552:
+;553:
+;554:void CG_CalculateWeaponPosition_VR_3Dof(refEntity_t *gun) {
+line 568
+;555:	centity_t			*cent;
+;556:	const clientInfo_t	*ci;
+;557:
+;558:	//==================
+;559:	//		3 Dof
+;560:	//==================
+;561:	vec3_t legsAngles, torsoAngles;
+;562:	vec3_t res_axis;
+;563:	vec3_t vr_controller_axis[3];
+;564:	refEntity_t legs;
+;565:	refEntity_t hand;
+;566:	vec3_t rightAngles;
+;567:
+;568:	memset(&legs, 0, sizeof(legs));
+ADDRLP4 140
+ARGP4
+CNSTI4 0
+ARGI4
+CNSTI4 140
+ARGI4
+ADDRGP4 memset
+CALLP4
+pop
+line 570
+;569:
+;570:	cent = &cg.predictedPlayerEntity;
+ADDRLP4 296
+ADDRGP4 cg+235356
+ASGNP4
+line 572
+;571:
+;572:	ci = &cgs.clientinfo[cent->currentState.clientNum];
+ADDRLP4 280
+ADDRLP4 296
+INDIRP4
+CNSTI4 168
+ADDP4
+INDIRI4
+CNSTI4 1680
+MULI4
+ADDRGP4 cgs+41012
+ADDP4
+ASGNP4
+line 574
+;573:
+;574:	legs.hModel = ci->legsModel;
+ADDRLP4 140+8
+ADDRLP4 280
+INDIRP4
+CNSTI4 420
+ADDP4
+INDIRI4
+ASGNI4
+line 575
+;575:	hand.hModel = ci->torsoModel;
+ADDRLP4 0+8
+ADDRLP4 280
+INDIRP4
+CNSTI4 428
+ADDP4
+INDIRI4
+ASGNI4
+line 577
+;576:
+;577:	legs.frame = ci->animations[LEGS_IDLE].firstFrame;
+ADDRLP4 140+80
+ADDRLP4 280
+INDIRP4
+CNSTI4 1064
+ADDP4
+INDIRI4
+ASGNI4
+line 578
+;578:	hand.frame = ci->animations[TORSO_STAND].firstFrame;
+ADDRLP4 0+80
+ADDRLP4 280
+INDIRP4
+CNSTI4 756
+ADDP4
+INDIRI4
+ASGNI4
+line 580
+;579:
+;580:	VectorClear(legsAngles);
+ADDRLP4 336
+CNSTF4 0
+ASGNF4
+ADDRLP4 336+4
+CNSTF4 0
+ASGNF4
+ADDRLP4 336+8
+CNSTF4 0
+ASGNF4
+line 581
+;581:	AnglesToAxis(legsAngles, legs.axis);
+ADDRLP4 336
+ARGP4
+ADDRLP4 140+28
+ARGP4
+ADDRGP4 AnglesToAxis
+CALLV
+pop
+line 583
+;582:
+;583:	VectorCopy(cent->lerpOrigin, legs.origin);
+ADDRLP4 140+68
+ADDRLP4 296
+INDIRP4
+CNSTI4 1212
+ADDP4
+INDIRB
+ASGNB 12
+line 584
+;584:	VectorCopy(legs.origin, legs.oldorigin);	// don't positionally lerp at all
+ADDRLP4 140+84
+ADDRLP4 140+68
+INDIRB
+ASGNB 12
+line 586
+;585:
+;586:	VR_get_cent_controller_angles( cent, rightAngles, SideRIGHT );
+ADDRLP4 296
+INDIRP4
+ARGP4
+ADDRLP4 360
+ARGP4
+CNSTI4 1
+ARGI4
+ADDRGP4 VR_get_cent_controller_angles
+CALLV
+pop
+line 588
+;587:
+;588:	VectorCopy(rightAngles, torsoAngles);
+ADDRLP4 348
+ADDRLP4 360
+INDIRB
+ASGNB 12
+line 589
+;589:	torsoAngles[ROLL] = 0;
+ADDRLP4 348+8
+CNSTF4 0
+ASGNF4
+line 591
+;590:
+;591:	AnglesToAxis(torsoAngles, hand.axis);
+ADDRLP4 348
+ARGP4
+ADDRLP4 0+28
+ARGP4
+ADDRGP4 AnglesToAxis
+CALLV
+pop
+line 592
+;592:	CG_PositionRotatedEntityOnTag(&hand, &legs, ci->legsModel, "tag_torso");
+ADDRLP4 0
+ARGP4
+ADDRLP4 140
+ARGP4
+ADDRLP4 280
+INDIRP4
+CNSTI4 420
+ADDP4
+INDIRI4
+ARGI4
+ADDRGP4 $279
+ARGP4
+ADDRGP4 CG_PositionRotatedEntityOnTag
+CALLV
+pop
+line 595
+;593:
+;594:	// get the weapon angle, from torso placement and axis. we will later remove these angles from the torso matrix
+;595:	CG_GetPlayerWeaponAxis(&hand, NULL, cent, gun);
+ADDRLP4 0
+ARGP4
+CNSTP4 0
+ARGP4
+ADDRLP4 296
+INDIRP4
+ARGP4
+ADDRFP4 0
+INDIRP4
+ARGP4
+ADDRGP4 CG_GetPlayerWeaponAxis
+CALLV
+pop
+line 597
+;596:
+;597:	AnglesToAxis(rightAngles, vr_controller_axis);
+ADDRLP4 360
+ARGP4
+ADDRLP4 300
+ARGP4
+ADDRGP4 AnglesToAxis
+CALLV
+pop
+line 600
+;598:
+;599:	// Remove VR controller axis part from gun axis
+;600:	VectorSubtract(gun->axis[PITCH], vr_controller_axis[PITCH], res_axis);
+ADDRLP4 372
+ADDRFP4 0
+INDIRP4
+ASGNP4
+ADDRLP4 284
+ADDRLP4 372
+INDIRP4
+CNSTI4 28
+ADDP4
+INDIRF4
+ADDRLP4 300
+INDIRF4
+SUBF4
+ASGNF4
+ADDRLP4 284+4
+ADDRLP4 372
+INDIRP4
+CNSTI4 32
+ADDP4
+INDIRF4
+ADDRLP4 300+4
+INDIRF4
+SUBF4
+ASGNF4
+ADDRLP4 284+8
+ADDRFP4 0
+INDIRP4
+CNSTI4 36
+ADDP4
+INDIRF4
+ADDRLP4 300+8
+INDIRF4
+SUBF4
+ASGNF4
+line 603
+;601:
+;602:	// add the [PITCH] axis
+;603:	VectorAdd(hand.axis[PITCH], res_axis, hand.axis[PITCH]);
+ADDRLP4 0+28
+ADDRLP4 0+28
+INDIRF4
+ADDRLP4 284
+INDIRF4
+ADDF4
+ASGNF4
+ADDRLP4 0+28+4
+ADDRLP4 0+28+4
+INDIRF4
+ADDRLP4 284+4
+INDIRF4
+ADDF4
+ASGNF4
+ADDRLP4 0+28+8
+ADDRLP4 0+28+8
+INDIRF4
+ADDRLP4 284+8
+INDIRF4
+ADDF4
+ASGNF4
+line 605
+;604:
+;605:	memcpy(gun->axis, vr_controller_axis, 36);
+ADDRFP4 0
+INDIRP4
+CNSTI4 28
+ADDP4
+ARGP4
+ADDRLP4 300
+ARGP4
+CNSTI4 36
+ARGI4
+ADDRGP4 memcpy
+CALLP4
+pop
+line 606
+;606:}
+LABELV $264
+endproc CG_CalculateWeaponPosition_VR_3Dof 376 16
+export CG_IsFollowMode
+proc CG_IsFollowMode 12 0
+line 609
+;607:
+;608:
+;609:qboolean CG_IsFollowMode( int followMode ) {
+line 610
+;610:	if (!cg.snap)
+ADDRGP4 cg+36
+INDIRP4
+CVPU4 4
+CNSTU4 0
+NEU4 $297
+line 611
+;611:		return qfalse;
+CNSTI4 0
+RETI4
+ADDRGP4 $296
+JUMPV
+LABELV $297
+line 612
+;612:	else {
+line 613
+;613:		int vrFlags = VR_get_client_vrFlags();
+ADDRLP4 4
+ADDRGP4 VR_get_client_vrFlags
+CALLI4
+ASGNI4
+ADDRLP4 0
+ADDRLP4 4
+INDIRI4
+ASGNI4
+line 614
+;614:		return ((cg.snap->ps.pm_flags & PMF_FOLLOW) && (vrFlags & followMode));
+ADDRGP4 cg+36
+INDIRP4
+CNSTI4 56
+ADDP4
+INDIRI4
+CNSTI4 4096
+BANDI4
+CNSTI4 0
+EQI4 $302
+ADDRLP4 0
+INDIRI4
+ADDRFP4 0
+INDIRI4
+BANDI4
+CNSTI4 0
+EQI4 $302
+ADDRLP4 8
+CNSTI4 1
+ASGNI4
+ADDRGP4 $303
+JUMPV
+LABELV $302
+ADDRLP4 8
+CNSTI4 0
+ASGNI4
+LABELV $303
+ADDRLP4 8
+INDIRI4
+RETI4
+LABELV $296
+endproc CG_IsFollowMode 12 0
+export CG_IsThirdPersonFollowMode_Query
+proc CG_IsThirdPersonFollowMode_Query 16 0
+line 618
+;615:	}
+;616:}
+;617:
+;618:qboolean CG_IsThirdPersonFollowMode_Query( void ) {
+line 619
+;619:	if ( !cg.snap )
+ADDRGP4 cg+36
+INDIRP4
+CVPU4 4
+CNSTU4 0
+NEU4 $305
+line 620
+;620:		return qfalse;
+CNSTI4 0
+RETI4
+ADDRGP4 $304
+JUMPV
+LABELV $305
+line 621
+;621:	else {
+line 622
+;622:		int vrFlags = VR_get_client_vrFlags();
+ADDRLP4 4
+ADDRGP4 VR_get_client_vrFlags
+CALLI4
+ASGNI4
+ADDRLP4 0
+ADDRLP4 4
+INDIRI4
+ASGNI4
+line 623
+;623:		return ((cg.snap->ps.pm_flags & PMF_FOLLOW) && ((vrFlags & EF_FM_THIRDPERSON_1) || (vrFlags & EF_FM_THIRDPERSON_2)));
+ADDRGP4 cg+36
+INDIRP4
+CNSTI4 56
+ADDP4
+INDIRI4
+CNSTI4 4096
+BANDI4
+CNSTI4 0
+EQI4 $310
+ADDRLP4 12
+ADDRLP4 0
+INDIRI4
+ASGNI4
+ADDRLP4 12
+INDIRI4
+CNSTI4 16
+BANDI4
+CNSTI4 0
+NEI4 $312
+ADDRLP4 12
+INDIRI4
+CNSTI4 32
+BANDI4
+CNSTI4 0
+EQI4 $310
+LABELV $312
+ADDRLP4 8
+CNSTI4 1
+ASGNI4
+ADDRGP4 $311
+JUMPV
+LABELV $310
+ADDRLP4 8
+CNSTI4 0
+ASGNI4
+LABELV $311
+ADDRLP4 8
+INDIRI4
+RETI4
+LABELV $304
+endproc CG_IsThirdPersonFollowMode_Query 16 0
+export CG_IsDeathCam
+proc CG_IsDeathCam 4 0
+line 627
+;624:	}
+;625:}
+;626:
+;627:qboolean CG_IsDeathCam( void ) {
+line 628
+;628:	return 	( (cg.predictedPlayerState.stats[STAT_HEALTH] <= 0) &&
+ADDRGP4 cg+234796+184
+INDIRI4
+CNSTI4 0
+GTI4 $319
+ADDRGP4 cg+234796+4
+INDIRI4
+CNSTI4 5
+EQI4 $319
+ADDRLP4 0
+CNSTI4 1
+ASGNI4
+ADDRGP4 $320
+JUMPV
+LABELV $319
+ADDRLP4 0
+CNSTI4 0
+ASGNI4
+LABELV $320
+ADDRLP4 0
+INDIRI4
+RETI4
+LABELV $313
+endproc CG_IsDeathCam 4 0
+import trap_R_AddLinearLightToScene
+import trap_R_AddRefEntityToScene2
+import linearLight
+import intShaderTime
+import CG_NewParticleArea
+import initparticles
+import CG_ParticleExplosion
+import CG_ParticleMisc
+import CG_ParticleDust
+import CG_ParticleSparks
+import CG_ParticleBulletDebris
+import CG_ParticleSnowFlurry
+import CG_AddParticleShrapnel
+import CG_ParticleSmoke
+import CG_ParticleSnow
+import CG_AddParticles
+import CG_ClearParticles
+import trap_GetEntityToken
+import trap_getCameraInfo
+import trap_startCamera
+import trap_loadCamera
+import trap_SnapVector
+import trap_CIN_SetExtents
+import trap_CIN_DrawCinematic
+import trap_CIN_RunCinematic
+import trap_CIN_StopCinematic
+import trap_CIN_PlayCinematic
+import trap_Key_GetKey
+import trap_Key_SetCatcher
+import trap_Key_GetCatcher
+import trap_Key_IsDown
+import trap_R_RegisterFont
+import trap_MemoryRemaining
+import testPrintFloat
+import testPrintInt
+import trap_SetUserCmdValue
+import trap_GetUserCmd
+import trap_GetCurrentCmdNumber
+import trap_GetServerCommand
+import trap_GetSnapshot
+import trap_GetCurrentSnapshotNumber
+import trap_GetGameState
+import trap_GetGlconfig
+import trap_VR_KeepLeftAngles
+import trap_VR_keepLeftMuzzlePos
+import trap_VR_KeepSpawnAngles
+import trap_VR_KeepRightAngles
+import trap_VR_keepRightMuzzlePos
+import CG_ChangeFrameResolution
+import trap_R_RenderHUD
+import trap_R_inPVS
+import trap_R_RemapShader
+import trap_R_LerpTag
+import trap_R_ModelBounds
+import trap_R_DrawStretchPic
+import trap_R_SetColor
+import trap_R_RenderScene
+import trap_R_LightForPoint
+import trap_R_AddAdditiveLightToScene
+import trap_R_AddLightToScene
+import trap_R_AddPolysToScene
+import trap_R_AddPolyToScene
+import trap_R_AddRefEntityToScene
+import trap_R_ClearScene
+import trap_R_RegisterShaderNoMip
+import trap_R_RegisterShader
+import trap_R_RegisterSkin
+import trap_R_RegisterModel
+import trap_R_LoadWorldMap
+import trap_S_StopBackgroundTrack
+import trap_S_StartBackgroundTrack
+import trap_S_RegisterSound
+import trap_S_Respatialize
+import trap_S_UpdateEntityPosition
+import trap_S_AddRealLoopingSound
+import trap_S_AddLoopingSound
+import trap_S_ClearLoopingSounds
+import trap_S_StartLocalSound
+import trap_S_StopLoopingSound
+import trap_S_StartSound
+import trap_CM_MarkFragments
+import trap_CM_TransformedCapsuleTrace
+import trap_CM_TransformedBoxTrace
+import trap_CM_CapsuleTrace
+import trap_CM_BoxTrace
+import trap_CM_TransformedPointContents
+import trap_CM_PointContents
+import trap_CM_TempBoxModel
+import trap_CM_InlineModel
+import trap_CM_NumInlineModels
+import trap_CM_LoadMap
+import trap_UpdateScreen
+import trap_SendClientCommand
+import trap_RemoveCommand
+import trap_AddCommand
+import trap_RealTime
+import trap_SendConsoleCommand
+import trap_FS_Seek
+import trap_FS_FCloseFile
+import trap_FS_Write
+import trap_FS_Read
+import trap_FS_FOpenFile
+import trap_Args
+import trap_Argv
+import trap_Argc
+import trap_Cvar_VariableStringBuffer
+import trap_Cvar_Set
+import trap_Cvar_Update
+import trap_Cvar_Register
+import trap_Milliseconds
+import trap_Error
+import trap_Print
+import CG_VR_Keyboard
+import CG_VR_Menu
+import CG_CheckChangedPredictableEvents
+import CG_TransitionPlayerState
+import CG_Respawn
+import CG_PlayBufferedVoiceChats
+import CG_VoiceChatLocal
+import CG_LoadVoiceChats
+import CG_ShaderStateChanged
+import CG_SetConfigValues
+import CG_ParseSysteminfo
+import CG_ParseServerinfo
+import CG_ExecuteNewServerCommands
+import CG_InitConsoleCommands
+import CG_ConsoleCommand
+import CG_ScoreboardClick
+import CG_DrawOldTourneyScoreboard
+import CG_DrawOldScoreboard
+import CG_DrawInformation
+import CG_LoadingClient
+import CG_LoadingItem
+import CG_LoadingString
+import CG_ProcessSnapshots
+import CG_MakeExplosion
+import CG_Bleed
+import CG_BigExplode
+import CG_GibPlayer
+import CG_ScorePlum
+import CG_SpawnEffect
+import CG_BubbleTrail
+import CG_SmokePuff
+import CG_AddLocalEntities
+import CG_AllocLocalEntity
+import CG_InitLocalEntities
+import CG_ImpactMark
+import CG_AddMarks
+import CG_InitMarkPolys
+import CG_OutOfAmmoChange
+import CG_DrawWeaponSelect_V
+import CG_DrawWeaponSelect_H
+import CG_DrawCrosshair3D
+import CG_GetPlayerWeaponAxis
+import CG_AddPlayerWeapon
+import CG_AddViewWeapon
+import CG_GrappleTrail
+import CG_RailTrail
+import CG_Bullet
+import CG_ShotgunFire
+import CG_MissileHitPlayer
+import CG_MissileHitWall
+import CG_FireWeapon
+import CG_RegisterItemVisuals
+import CG_RegisterWeapon
+import CG_LaserNeeded
+import CG_LaserSight
+import CG_CalculateWeaponPosition
+import CG_DrawWeaponSelector
+import CG_WeaponSelectorSelect_f
+import CG_Weapon_f
+import CG_PrevWeapon_f
+import CG_NextWeapon_f
+import CG_PositionRotatedEntityOnTag
+import CG_PositionEntityOnTag
+import CG_AdjustPositionForMover
+import CG_Beam
+import CG_AddPacketEntities
+import CG_SetEntitySoundPosition
+import CG_PainEvent
+import CG_EntityEvent
+import CG_PlaceString
+import CG_CheckEvents
+import CG_PlayDroppedEvents
+import CG_LoadDeferredPlayers
+import CG_PredictPlayerState
+import CG_Trace
+import CG_PointContents
+import CG_BuildSolidList
+import CG_CustomSound
+import CG_GetModelHeight
+import CG_NewClientInfo
+import CG_AddRefEntityWithPowerups
+import CG_ResetPlayerEntity
+import CG_Player
+import CG_TrackClientTeamChange
+import CG_ForceModelChange
+import CG_ShowResponseHead
+import CG_CheckOrderPending
+import CG_OtherTeamHasFlag
+import CG_YourTeamHasFlag
+import CG_SelectNextPlayer
+import CG_SelectPrevPlayer
+import CG_Draw3DModel
+import CG_Text_Height
+import CG_Text_Width
+import CG_Text_Paint
+import CG_DrawTeamBackground
+import CG_DrawFlagModel
+import CG_DrawActive
+import CG_DrawHead
+import CG_CenterPrint
+import CG_AddLagometerSnapshotInfo
+import CG_AddLagometerFrameInfo
+import teamChat2
+import teamChat1
+import systemChat
+import drawTeamOverlayModificationCount
+import numSortedTeamPlayers
+import sortedTeamPlayers
+import CG_SelectFont
+import CG_LoadFonts
+import CG_DrawString
+import CG_DrawTopBottom
+import CG_DrawSides
+import CG_DrawRect
+import UI_DrawProportionalString
+import CG_GetColorForHealth
+import CG_ColorForHealth
+import CG_TileClear
+import CG_TeamColor
+import CG_FadeColorTime
+import CG_FadeColor
+import CG_DrawStrlen
+import CG_DrawStringExt
+import CG_DrawGradientPic
+import CG_DrawPic
+import CG_FillScreen
+import CG_FillRect
+import CG_AdjustFrom640
+import CG_DrawActiveFrame
+import CG_AddBufferedSound
+import CG_ZoomUp_f
+import CG_ZoomDown_f
+import CG_TestModelPrevSkin_f
+import CG_TestModelNextSkin_f
+import CG_TestModelPrevFrame_f
+import CG_TestModelNextFrame_f
+import CG_TestGun_f
+import CG_TestModel_f
+import CG_SetScoreCatcher
+import CG_BuildSpectatorString
+import CG_SetScoreSelection
+import CG_RankRunFrame
+import CG_EventHandling
+import CG_MouseEvent
+import CG_KeyEvent
+import CG_LoadMenus
+import CG_LastAttacker
+import CG_CrosshairPlayer
+import CG_UpdateCvars
+import CG_StartMusic
+import CG_Error
+import CG_Printf
+import CG_Argv
+import CG_ConfigString
+import laserBeam
+import vr_controller_type
+import menu_distance
+import VR_angle_hide_torso
+import VR_hide_torso
+import showVirtualKeyboard
+import eventnames
+import cg_followKiller
+import cg_fovAdjust
+import cg_deadBodyDarken
+import cg_teamColors
+import cg_teamModel
+import cg_enemyColors
+import cg_enemyModel
+import cg_hitSounds
+import cg_currentSelectedPlayer
+import cg_trueLightning
+import cg_oldPlasma
+import cg_oldRocket
+import cg_oldRail
+import cg_noProjectileTrail
+import cg_noTaunt
+import cg_bigFont
+import cg_smallFont
+import cg_cameraMode
+import cg_timescale
+import cg_timescaleFadeSpeed
+import cg_timescaleFadeEnd
+import cg_cameraOrbitDelay
+import cg_cameraOrbit
+import cg_smoothClients
+import cg_allowDeathCam
+import cg_itemTimer
+import cg_scorePlum
+import cg_noVoiceText
+import cg_noVoiceChats
+import cg_teamChatsOnly
+import cg_drawFriend
+import cg_deferPlayers
+import cg_predictItems
+import cg_blood
+import cg_paused
+import cg_buildScript
+import cg_forceModel
+import cg_stats
+import cg_teamChatHeight
+import cg_teamChatTime
+import cg_drawSpeed
+import cg_drawAttacker
+import cg_drawPing
+import cg_lagometer
+import cg_thirdPerson
+import cg_thirdPersonAngle
+import cg_thirdPersonRange
+import cg_zoomFov
+import cg_fov
+import cg_simpleItems
+import cg_ignore
+import cg_autoswitch
+import cg_tracerLength
+import cg_tracerWidth
+import cg_tracerChance
+import cg_viewsize
+import cg_drawGun
+import cg_gun_z
+import cg_gun_y
+import cg_gun_x
+import cg_gun_frame
+import cg_brassTime
+import cg_addMarks
+import cg_footsteps
+import cg_showmiss
+import cg_noPlayerAnims
+import cg_nopredict
+import cg_errorDecay
+import cg_railTrailRadius
+import cg_railTrailTime
+import cg_debugEvents
+import cg_debugPosition
+import cg_debugAnim
+import cg_animSpeed
+import cg_draw2D
+import cg_drawStatus
+import cg_crosshairHealth
+import cg_crosshairSize
+import cg_crosshairY
+import cg_crosshairX
+import cg_drawWeaponSelect
+import cg_teamOverlayUserinfo
+import cg_drawTeamOverlay
+import cg_drawRewards
+import cg_drawCrosshairNames
+import cg_drawCrosshair
+import cg_drawAmmoWarning
+import cg_drawIcons
+import cg_draw3dIcons
+import cg_drawSnapshot
+import cg_drawFPS
+import cg_drawTimer
+import cg_gibs
+import cg_shadows
+import cg_swingSpeed
+import cg_bobroll
+import cg_bobpitch
+import cg_bobup
+import cg_runroll
+import cg_runpitch
+import cg_centertime
+import cg_markPolys
+import cg_items
+import cg_weapons
+import cg_entities
+import cg
+import cgs
+import cg_weaponSelectorSimple2DIcons
+import cg_debugWeaponAiming
+import cg_fragMessage
+import cg_playerShadow
+import cg_weaponbob
+import client_weapon
+import CG_DrawAttacker_icon
+import CG_DrawSelectedPlayerStatus
+import HUD_color
+import HUD_ItemCaptionValue
+import CG_DrawTeamPlayerPowerup
+import CG_Draw_Icon_Ammo
+import CG_Draw_Icon_Armor
+import CG_DrawStatusBarHead
+import playerTeam
+import getPlayerHealth
+import getPlayerLocation
+import getTeamPlayerName
+import HUD_Update_finalRect
+import HUD_DrawGradientBackground
+import HUD_DrawBackground
+import copyColor
+import HUD_Draw_Text
+import HUD_GradientValue
+import FPS
+import TeamOverlay_Sel_idx
+import ServerMsg_idx
+import ItemMsg_idx
+import Attacker_idx
+import KillMsg_idx
+import WarmFightMsg_idx
+import IcoPowerUp_idx
+import WeapListSelName_idx
+import IcoWeapListSel_idx
+import IcoWeapList_idx
+import HUD_Update_Valign
+import HUD_Update_Margin
+import HUD_Update_Anchors
+import CG_HUDItemVisible
+import CG_HUDShader
+import item_Keywords
+import dyn_itemCount
+import dyn_itemArray
+import itemCount
+import itemArray
+import CG_CheckHUD
+import String_Init
+import String_Alloc
+import teams_colors
+import ammo_colors
+import armor_colors
+import health_colors
+import VRMOD_IN_Button
+import VRMOD_togglePlayerLaserBeam
+import VRMOD_IN_Grab
+import VRMOD_IN_Triggers
+import VRMOD_IN_Joystick
+import VRMOD_CL_MouseEvent
+import VRMOD_CL_VRInit
+import VRMOD_CL_KeepLeftAngles
+import VRMOD_CL_KeepRightAngles
+import VRMOD_CL_KeepRightPos
+import VRMOD_CL_Finish_VR_Move
+import VRMOD_CL_handle_controllers
+import VRMOD_CL_Get_HMD_Position
+import VRMOD_CL_Get_HMD_Angles
+import VRMOD_CL_GestureCrouchCheck
+import positional_movementForward
+import positional_movementSideways
+import BigEndian
+import replace1
+import Q_stradd
+import Q_strcpy
+import BG_StripColor
+import BG_CleanName
+import DecodedString
+import EncodedString
+import strtok
+import Q_stristr
+import BG_sprintf
+import BG_PlayerTouchesItem
+import BG_PlayerStateToEntityStateExtraPolate
+import BG_PlayerStateToEntityState
+import BG_TouchJumpPad
+import BG_AddPredictableEventToPlayerstate
+import BG_EvaluateTrajectoryDelta
+import BG_EvaluateTrajectory
+import BG_CanItemBeGrabbed
+import BG_FindItemForHoldable
+import BG_FindItemForPowerup
+import BG_FindItemForWeapon
+import BG_FindItem
+import bg_numItems
+import bg_itemlist
+import Pmove
+import PM_UpdateViewAngles
+import Com_Printf
+import Com_Error
+import Info_NextPair
+import Info_ValidateKeyValue
+import Info_Validate
+import Info_SetValueForKey_Big
+import Info_SetValueForKey
+import Info_ValueForKey
+import va
+import Q_CleanStr
+import Q_PrintStrlen
+import Q_strcat
+import Q_strncpyz
+import Q_strrchr
+import Q_strupr
+import Q_strlwr
+import Q_stricmpn
+import Q_strncmp
+import Q_stricmp
+import Q_isalpha
+import Q_isupper
+import Q_islower
+import Q_isprint
+import locase
+import trap_PC_FreeSource
+import trap_PC_LoadSource
+import trap_PC_ReadToken
+import trap_PC_SourceFileAndLine
+import Com_sprintf
+import Parse3DMatrix
+import Parse2DMatrix
+import Parse1DMatrix
+import SkipRestOfLine
+import SkipBracedSection
+import COM_MatchToken
+import Com_Split
+import COM_ParseSep
+import Com_InitSeparators
+import SkipTillSeparators
+import COM_ParseWarning
+import COM_ParseError
+import COM_Compress
+import COM_ParseExt
+import COM_Parse
+import COM_GetCurrentParseLine
+import COM_BeginParseSession
+import COM_DefaultExtension
+import COM_StripExtension
+import COM_SkipPath
+import hex_to_color
+import Com_Clamp
+import PerpendicularVector
+import AngleVectors
+import MatrixMultiply
+import MakeNormalVectors
+import RotateAroundDirection
+import RotatePointAroundVector
+import ProjectPointOnPlane
+import PlaneFromPoints
+import AngleDelta
+import AngleNormalize180
+import AngleNormalize360
+import AnglesSubtract
+import AngleSubtract
+import LerpAngle
+import AngleMod
+import BoxOnPlaneSide
+import SetPlaneSignbits
+import AxisCopy
+import AxisClear
+import AnglesToAxis
+import vectoangles
+import Q_crandom
+import Q_random
+import Q_rand
+import Q_acos
+import Q_log2
+import VectorRotate
+import Vector4Scale
+import VectorNormalize2
+import VectorNormalize
+import CrossProduct
+import VectorInverse
+import VectorNormalizeFast
+import DistanceSquared
+import Distance
+import VectorLengthSquared
+import VectorLength
+import VectorCompare
+import AddPointToBounds
+import ClearBounds
+import RadiusFromBounds
+import NormalizeColor
+import ColorBytes4
+import ColorBytes3
+import _VectorMA
+import _VectorScale
+import _VectorCopy
+import _VectorAdd
+import _VectorSubtract
+import _DotProduct
+import ByteToDir
+import DirToByte
+import ClampFloat
+import ClampShort
+import ClampChar
+import Q_rsqrt
+import Q_fabs
+import axisDefault
+import vec3_origin
+import g_color_table
+import colorDkGrey
+import colorMdGrey
+import colorLtGrey
+import colorWhite
+import colorCyan
+import colorMagenta
+import colorYellow
+import colorBlue
+import colorGreen
+import colorRed
+import colorBlack
+import bytedirs
+import Hunk_Alloc
+import acos
+import fabs
+import abs
+import tan
+import atan2
+import cos
+import sin
+import sqrt
+import floor
+import ceil
+import memcpy
+import memset
+import memmove
+import Q_sscanf
+import ED_vsprintf
+import atoi
+import atof
+import toupper
+import tolower
+import strncpy
+import strstr
+import strchr
+import strcmp
+import strcpy
+import strcat
+import strlen
+import rand
+import srand
+import qsort
+lit
+align 1
+LABELV $279
+byte 1 116
+byte 1 97
+byte 1 103
+byte 1 95
+byte 1 116
+byte 1 111
+byte 1 114
+byte 1 115
+byte 1 111
+byte 1 0
